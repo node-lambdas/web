@@ -1,0 +1,27 @@
+{
+  "name": "@node-lambdas/web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/node-lambdas/web.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/node-lambdas/web/issues"
+  },
+  "homepage": "https://jsfn.run/",
+  "dependencies": {
+    "@homebots/elements": "^0.6.0"
+  },
+  "devDependencies": {
+    "parcel-plugin-stringify-anything": "^1.2.0",
+    "typescript": "^4.0.2"
+  },
+  "assetTypesToStringify": [
+    "htm",
+    "css"
+  ]
+}
