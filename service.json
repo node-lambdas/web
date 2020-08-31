@@ -1,0 +1,5 @@
+{
+  "type": "nginx",
+  "port": 80,
+  "domain": "jsfn.run"
+}
