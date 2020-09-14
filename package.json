@@ -2,7 +2,8 @@
   "name": "@node-lambdas/web",
   "version": "1.0.0",
   "scripts": {
-    "start": "parcel src/index.html"
+    "start": "parcel src/index.html",
+    "build": "parcel src/index.html"
   },
   "repository": {
     "type": "git",
