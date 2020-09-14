@@ -1,0 +1,46 @@
+<div
+  class="flex justify-between items-start rounded my-2 border border-gray-400 border-solid bg-gray-100 p-2 font-mono flex justify-start"
+>
+  <span class="py-2 px-4 text-gray-500">fn</span>
+  <div class="w-1/3 flex">
+    <input
+      class="bg-transparent w-1/2 text-orange-400 py-2 px-4 border-b border-solid border-gray-400 mr-4"
+      (input)="this.step.name = $event.target.value"
+    />
+    <input
+      class="bg-transparent w-1/2 text-orange-400 py-2 px-4 border-b border-solid border-gray-400"
+      (input)="this.step.action = $event.target.value"
+    />
+  </div>
+  <div class="w-2/3 flex-grow">
+    <template *for="'option'" [of]="this.options">
+      <div class="flex items-center px-4">
+        <span class="px-2 text-gray-500">--</span>
+        <input
+          type="text"
+          class="bg-transparent text-orange-400 py-2 px-2 flex-grow border-b border-solid border-gray-400"
+          [value]="option"
+          (change)="this.updateOption(index, $event.target.value);"
+        />
+      </div>
+    </template>
+  </div>
+  <div class="flex items-center py-1">
+    <button
+      (click)="this.addOption()"
+      class="border-gray-400 border-solid bg-gray-400 text-gray-600 rounded py-1 px-2 mr-4"
+      type="button"
+    >
+      +
+    </button>
+    <input type="checkbox" @id="'local' + this.uid" (change)="this.step.local = $event.target.checked" />
+    <label class="pl-2 pr-4" @for="'local' + this.uid">+local </label>
+    <label class="pl-2 pr-4" @for="'local' + this.uid">+port=</label>
+    <input
+      type="number"
+      class="bg-transparent text-orange-400 py-2 px-2 border-b border-solid border-gray-400 w-24"
+      (input)="this.step.port = $event.target.value"
+    />
+  </div>
+  <button (click)="this.onRemove.emit()" class="px-4 py-2 text-red-600" type="button">&times;</button>
+</div>

@@ -4,12 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My App</title>
-    <script src="https://unpkg.com/zone.js"></script>
+    <!-- <script src="https://unpkg.com/zone.js"></script> -->
     <script src="https://unpkg.com/reflect-metadata"></script>
     <script src="./index.ts"></script>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./index.scss" />
   </head>
 
   <body>
-    <x-app> Hi! </x-app>
+    <x-app class="mx-4 block lg:w-2/3 lg:m-auto"></x-app>
   </body>
 </html>

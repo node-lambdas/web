@@ -1,9 +1,9 @@
 {
   "name": "@node-lambdas/web",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "start": "parcel src/index.html"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/node-lambdas/web.git"
@@ -14,14 +14,20 @@
   },
   "homepage": "https://jsfn.run/",
   "dependencies": {
-    "@homebots/elements": "^0.6.0"
+    "@homebots/elements": "^0.7.2"
   },
   "devDependencies": {
+    "@node-lambdas/client": "^1.0.4",
+    "parcel-bundler": "^1.12.4",
     "parcel-plugin-stringify-anything": "^1.2.0",
+    "tslib": "^2.0.1",
     "typescript": "^4.0.2"
   },
   "assetTypesToStringify": [
     "htm",
     "css"
+  ],
+  "browserslist": [
+    "last 1 Chrome version"
   ]
 }
