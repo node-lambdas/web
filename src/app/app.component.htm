@@ -4,16 +4,17 @@
     name="input"
     data-id="stdin"
     placeholder="input"
-    class="border border-gray-400 border-solid bg-gray-100 w-full h-20 text-blue-800 font-mono p-2"
+    class="border border-gray-400 border-solid bg-gray-100 w-full h-20 p-2 text-blue-800 font-mono p-2"
   ></textarea>
 
-  <hr class="mt-2 mb-3" />
+  <hr class="mt-4 mb-5 border-orange-400" />
+
   <form (submit.stop)="this.run()" action>
     <template *for="'item'" [of]="this.steps">
       <x-step [step]="item" (remove)="this.removeStep(index)" class="flex-grow"></x-step>
     </template>
   </form>
-  <div class="flex w-full bg-gray justify-between">
+  <div class="flex w-full bg-gray justify-between py-5">
     <div class="btn-group">
       <button
         (click)="this.addStep()"
@@ -39,10 +40,14 @@
       run
     </button>
   </div>
-  <div class="flex w-full justify-end"></div>
-  <hr class="mt-3 mb-3" />
+
+  <hr class="mt-4 mb-5 border-orange-400" />
+
   <template *if="!!this.stdout">
-    <div [innertext]="this.stdout" class="border border-gray-400 border-solid bg-gray-100 w-full font-mono"></div
+    <div
+      [innertext]="this.stdout"
+      class="border border-gray-400 border-solid bg-gray-100 w-full font-mono p-4 rounded"
+    ></div
   ></template>
   <template *if="!!this.stderr">
     <div

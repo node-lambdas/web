@@ -11,12 +11,19 @@ export class AppComponent extends HTMLElement {
   @Child('[data-id="stdin"]') stdinRef: HTMLTextAreaElement;
   @Inject(ChangeDetectorRef) cd: ChangeDetector;
 
-  steps: RunOptions[] = [{}];
+  steps: RunOptions[];
   stdout: string = '';
   stderr: string = '';
 
   onInit() {
     this.stdinRef.value = JSON.stringify({ number: 42 });
+
+    const steps: RunOptions[] = [{}];
+    if (location.search) {
+      steps[0].name = location.search.slice(1);
+    }
+
+    this.steps = steps;
   }
 
   reset() {
@@ -42,6 +49,7 @@ export class AppComponent extends HTMLElement {
   async run() {
     try {
       this.stdout = await (await pipe(this.stdin, ...this.steps)).text();
+      this.stderr = null;
     } catch (error) {
       this.stderr = String(error);
     }
