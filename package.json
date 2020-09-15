@@ -2,8 +2,8 @@
   "name": "@node-lambdas/web",
   "version": "1.0.0",
   "scripts": {
-    "start": "parcel src/index.html",
-    "build": "parcel src/index.html"
+    "watch": "parcel src/index.html",
+    "build": "parcel build src/index.html"
   },
   "repository": {
     "type": "git",
@@ -14,10 +14,8 @@
     "url": "https://github.com/node-lambdas/web/issues"
   },
   "homepage": "https://jsfn.run/",
-  "dependencies": {
-    "@homebots/elements": "^0.7.2"
-  },
   "devDependencies": {
+    "@homebots/elements": "^0.7.2",
     "@node-lambdas/client": "^1.0.4",
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-stringify-anything": "^1.2.0",
