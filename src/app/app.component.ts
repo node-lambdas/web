@@ -20,7 +20,8 @@ export class AppComponent extends HTMLElement {
 
     const steps: RunOptions[] = [{}];
     if (location.search) {
-      steps[0].name = location.search.slice(1);
+      const params = Object.fromEntries(new URL(location.href).searchParams);
+      steps[0].name = params.fn;
     }
 
     this.steps = steps;
