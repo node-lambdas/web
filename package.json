@@ -2,6 +2,7 @@
   "name": "@node-lambdas/web",
   "version": "1.0.0",
   "scripts": {
+    "ci": "npm ci && npm run build",
     "watch": "parcel src/index.html",
     "build": "parcel build src/index.html"
   },
@@ -22,11 +23,6 @@
     "tslib": "^2.0.1",
     "typescript": "^4.0.2"
   },
-  "assetTypesToStringify": [
-    "htm",
-    "css"
-  ],
-  "browserslist": [
-    "last 1 Chrome version"
-  ]
+  "assetTypesToStringify": ["htm", "css"],
+  "browserslist": ["last 1 Chrome version"]
 }
