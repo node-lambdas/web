@@ -2,7 +2,7 @@
   "name": "@node-lambdas/web",
   "version": "1.0.0",
   "scripts": {
-    "ci": "npm ci && npm run build",
+    "ci": "npm i && npm run build",
     "watch": "parcel src/index.html",
     "build": "parcel build src/index.html"
   },
