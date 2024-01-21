@@ -1,5 +1,5 @@
 import { Store } from 'https://store.homebots.io/index.mjs';
-import { listFiles, readMetadata, readFile, writeFile } from 'https://bin.homebots.io/index.mjs';
+import { listFiles, readMetadata, readFile, writeFile, createBin } from 'https://bin.homebots.io/index.mjs';
 import {
   getProfile,
   getProperty,
@@ -10,20 +10,22 @@ import {
 } from 'https://auth.homebots.io/index.mjs';
 
 type FileEntry = { contents: string; meta: Record<string, string> };
-type FunctionEntry = { uid: string; binId: string; name: string; };
+type FunctionEntry = { id: string; binId: string; name: string };
 
 window.addEventListener('DOMContentLoaded', async () => {
   let currentFile: FileEntry = { meta: {}, contents: '' };
   let binId = new URL(location.href).searchParams.get('id');
+  let store;
 
   const codeMirror = await getEditor();
+  const homeBtn = document.getElementById('homeBtn');
   const saveBtn = document.getElementById('saveBtn') as HTMLButtonElement;
   const filename = document.getElementById('filename')!;
   const editor = document.getElementById('editor')!;
   const files = document.getElementById('files')!;
   const signInBtn = document.getElementById('signInBtn')!;
-  const fnAdd = document.getElementById('fnAdd');
-  const fnName = document.getElementById('fnName');
+  const fnAdd = document.getElementById('fnAdd')!;
+  const fnName = document.getElementById('fnName')!;
 
   async function getFileList() {
     const list: FileEntry[] = [];
@@ -81,11 +83,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     saveBtn.disabled = true;
   }
 
-  function onAddFunction() {
-
-  }
-
-  async function updateList() {
+  async function updateFileList() {
     const list = await getFileList();
     const frag = document.createDocumentFragment();
     files.innerHTML = 'Loading...';
@@ -117,10 +115,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       await setProperty('jsfn:storeId', storeId);
     }
 
-    const store = Store.get(storeId);
-    const fns = store.getResource('fn');
-
-    return { fns };
+    store = Store.get(storeId);
   }
 
   async function setupAuth() {
@@ -138,7 +133,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     const fnSelector = document.getElementById('fnSelector') as HTMLSelectElement;
 
     fnSelector.options.length = 0;
-    fnSelector.onchange = console.log;
+    fnSelector.onchange = () => {
+      const option = fnSelector.options[fnSelector.selectedIndex];
+      const fn = functions.find((f) => f.id === option.value);
+
+      if (fn) {
+        onSelectFunction(fn);
+      }
+
+      fnSelector.selectedIndex = 0;
+    };
 
     const emptyOption = document.createElement('option');
     emptyOption.innerText = 'Select a function';
@@ -149,14 +153,39 @@ window.addEventListener('DOMContentLoaded', async () => {
       console.log(fn);
       const option = document.createElement('option');
       option.innerText = fn.name;
-      option.value = fn.uid;
+      option.value = fn.id;
       fnSelector.options.add(option);
     });
+  }
+
+  async function onSelectFunction(fn) {
+    binId = fn.binId;
+    fnName.innerText = fn.name;
+    updateFileList();
+  }
+
+  async function onAddFunction() {
+    const id = crypto.randomUUID();
+    const name = prompt('Function name');
+
+    if (!name) return;
+
+    const { binId } = await createBin();
+    const fn = {
+      id,
+      binId,
+      name,
+    };
+
+    await store.getResource('fn').set(id, fn);
+    onSelectFunction(fn);
   }
 
   async function main() {
     saveBtn.disabled = true;
     saveBtn.onclick = onSave;
+    fnAdd.onclick = onAddFunction;
+    homeBtn.onclick = updateFileList;
 
     signInBtn.onclick = async () => {
       try {
@@ -168,14 +197,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 
     await setupAuth();
+    await setupStore();
 
-    const { fns } = await setupStore();
-    const allFunctions = await fns.list();
+    const allFunctions = await store.getResource('fn').list();
 
     if (allFunctions.length) {
-      const fn = allFunctions[0];
-      binId = fn.binId;
-      updateList();
+      onSelectFunction(allFunctions[0]);
     }
 
     setupFunctionSelector(allFunctions);
