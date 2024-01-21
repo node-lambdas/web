@@ -1,11 +1,19 @@
 on:
   - push
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     uses: cloud-cli/workflows/.github/workflows/docker-ghcr-build.yml@main
+    permissions:
+      contents: read
+      packages: write
     with:
       name: node-lambdas/web
       baseImage: cloud-cli/node:latest
-      defaultBranch: main
-      type: node
+      withSha: false
+      withTag: true
+      type: vite
