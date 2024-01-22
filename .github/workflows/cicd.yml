@@ -16,4 +16,4 @@ jobs:
       baseImage: cloud-cli/node:latest
       withSha: false
       withTag: true
-      type: vite
+      type: node
