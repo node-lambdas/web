@@ -47,6 +47,10 @@ const actions = {
   },
 
   async addfile(name: string) {
+    if (!name) {
+      name = prompt('File name', 'Add file') || '';
+    }
+
     if (!name) return;
 
     const binId = get('binId');
@@ -127,6 +131,11 @@ const actions = {
     dispatch('updatefilelist');
     set('currentFile', null);
     set('currentFunction', fn);
+  },
+
+  reload() {
+    dispatch('updatefilelist');
+    dispatch('updatefunctionlist');
   },
 };
 

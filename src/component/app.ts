@@ -1,6 +1,6 @@
-import { customElement } from '../decorators';
-import { dispatch, onSetupAuth, onSetupStore, select } from '../store';
-import { html } from './component';
+import { customElement } from '../decorators.js';
+import { dispatch, onSetupAuth, onSetupStore, select } from '../store.js';
+import { html } from './component.js';
 
 const t = html`<div class="flex flex-col h-screen w-full">
   <div class="flex flex-1 overflow-hidden">
@@ -25,9 +25,7 @@ export class App extends HTMLElement {
   async onStart() {
     await onSetupAuth();
     await onSetupStore();
-
-    dispatch('updatefilelist');
-    dispatch('updatefunctionlist');
+    dispatch('reload');
   }
 
   connectedCallback() {

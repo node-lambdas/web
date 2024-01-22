@@ -1,4 +1,4 @@
-import { dispatch, select } from '../store';
+import { select } from '../store.js';
 import { html } from './component.js';
 
 const t = html`<div class="flex items-center w-full border-b p-2 space-x-4">

@@ -1,12 +1,12 @@
-import { customElement } from '../decorators';
-import { dispatch, react, select, watch } from '../store';
-import { html } from './component';
+import { customElement } from '../decorators.js';
+import { dispatch, select, watch } from '../store.js';
+import { html } from './component.js';
 
 const t = html`
   <div class="flex items-center p-2">
     <select class="bg-transparent font-small w-full p-3"></select>
     <span class="w-0 h-4 mx-2 block border-l border-gray-400"></span>
-    <button class="w-6 h-6" @click="onCreate()"><span class="material-icons">add</span></button>
+    <button class="w-6 h-6" ^click="create"><span class="material-icons">add</span></button>
   </div>
 `;
 
@@ -31,14 +31,13 @@ export class Selector extends HTMLElement {
     watch(this.options, () => this.updateOptions());
   }
 
-  onCreate() {
-    dispatch('create');
-  }
-
   updateOptions() {
     const s = this.querySelector('select') as HTMLSelectElement;
     const mappedOptions = this.options.value!.map((f) => ({ label: f.name, value: f }));
-    const options = [{ label: '-- select --', value: null }, ...mappedOptions];
+    const options = [
+      { label: `${this.getAttribute('placeholder') || 'Select an option'}`, value: null },
+      ...mappedOptions,
+    ];
 
     s.innerHTML = '';
 

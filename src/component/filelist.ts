@@ -4,7 +4,7 @@ import { html } from './component.js';
 
 const t = html`
   <div class="flex items-center justify-end p-2">
-    <button class="w-6 h-6" @click="onAddFile()"><span class="material-icons">add</span></button>
+    <button class="w-6 h-6" ^click="addfile"><span class="material-icons">add</span></button>
   </div>
   <nav class="py-4 space-y-1"></nav>
 `;
@@ -35,9 +35,5 @@ export class FileList extends HTMLElement {
         nav.append(f);
       }
     });
-  }
-
-  onAddFile() {
-    dispatch('addfile', prompt('File name'));
   }
 }
