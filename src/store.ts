@@ -104,6 +104,21 @@ export async function onUpdateFunctionList() {
   state.functionList = await getResourceStore().getResource('fn').list();
 }
 
+export async function onSetupAuth() {
+  onUpdateAuth();
+
+  authEvents.addEventListener('signin', onUpdateAuth);
+  authEvents.addEventListener('signout', onUpdateAuth);
+
+  try {
+    return await getProfile();
+  } catch {
+    return new Promise((resolve) => {
+      authEvents.addEventListener('signin', (e) => resolve(e.detail));
+    });
+  }
+}
+
 export async function onSetupStore() {
   let storeId = await getProperty('jsfn:storeId');
 
@@ -122,17 +137,6 @@ export async function onSignIn() {
   } catch {
     signIn(true);
   }
-}
-
-export async function onSetupAuth() {
-  onUpdateAuth();
-
-  authEvents.addEventListener('signin', onUpdateAuth);
-  authEvents.addEventListener('signout', onUpdateAuth);
-
-  return new Promise((resolve) => {
-    authEvents.addEventListener('signin', (e) => resolve(e.detail));
-  });
 }
 
 export function onSelectFile(file) {
