@@ -7,7 +7,7 @@ import {
   signIn,
   signOut,
   events as authEvents,
-} from 'https://auth.homebots.io/index.mjs';
+} from 'https://auth.jsfn.run/index.mjs';
 import { FileEntry, FunctionEntry } from './types';
 
 const initialState = {
@@ -93,7 +93,7 @@ export function onEditorValueChange(value) {
   state.currentFile = {
     meta: state.currentFile?.meta,
     contents: value,
-  }
+  };
 }
 
 export async function onUpdateFileList() {
