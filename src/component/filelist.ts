@@ -1,12 +1,17 @@
-import { EventDelegate } from 'es-eventdelegate';
-import { EventEmitter, customElement, emitter } from '../decorators.js';
-import { FileEntry } from '../types';
-import { react } from '../store.js';
+import { customElement } from '../decorators.js';
+import { dispatch, select, watch } from '../store.js';
 import { html } from './component.js';
 
+const t = html`
+  <div class="flex items-center justify-end p-2">
+    <button class="w-6 h-6" @click="onAddFile()"><span class="material-icons">add</span></button>
+  </div>
+  <nav class="py-4 space-y-1"></nav>
+`;
+
 const line = html`<a
-  :id="file?.meta?.id"
   href="#"
+  @click="onSelect(file)"
   class="flex items-center space-x-1 hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-1"
 >
   <span class="icon icon-file"></span>
@@ -15,23 +20,23 @@ const line = html`<a
 
 @customElement('js-filelist')
 export class FileList extends HTMLElement {
-  @emitter() private select: EventEmitter<FileEntry>;
+  fileList = select((s) => s.fileList);
 
   connectedCallback() {
-    const d = new EventDelegate(this);
-    d.add('click', 'a', (event) => this.onSelect(event));
+    this.append(t(this));
+    const nav = this.querySelector('nav') as HTMLElement;
 
-    this.innerHTML = `<nav class="py-4 space-y-1"></nav>`;
-    const nav = this.firstChild as HTMLElement;
-
-    react((s) => {
+    watch(this.fileList, (list) => {
       nav.innerHTML = '';
-      s.fileList.map((file) => nav.append(line(file)));
+      list.map((file) => nav.append(line({ file })));
     });
   }
 
-  onSelect(event) {
-    console.log(event);
-    this.select.emit(event);
+  onAddFile() {
+    dispatch('addfile', prompt('File name'));
+  }
+
+  onSelect(file) {
+    dispatch('selectfile', file);
   }
 }

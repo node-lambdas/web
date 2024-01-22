@@ -1,5 +1,6 @@
 import CodeMirror from '../../assets/codemirror.js';
 import { property } from '../decorators.js';
+import { dispatch } from '../store.js';
 
 class Editor extends HTMLElement {
   private editor: any = null;
@@ -26,7 +27,8 @@ class Editor extends HTMLElement {
 
     editor.getWrapperElement().style.fontSize = '12px';
     editor.on('change', () => {
-      this.dispatchEvent(new CustomEvent('change', { detail: this.valueInternal }));
+      dispatch('updatecontent', this.valueInternal);
+      // this.dispatchEvent(new CustomEvent('change', { detail: this.valueInternal }));
     });
   }
 

@@ -1,4 +1,5 @@
-import { dispatch } from '../store';
+import { customElement } from '../decorators';
+import { dispatch, select } from '../store';
 import { html } from './component';
 
 const t = html`
@@ -6,18 +7,19 @@ const t = html`
     <a href="#" @click="onReload()">
       <img class="w-6 h-6 rounded" src="https://avatars.githubusercontent.com/u/69599650?s=24&v=4" alt="" />
     </a>
-    <span class="text-sm flex-grow ml-2 font-bold">jsfn.run</span>
-    <button class="w-6 h-6" @click="onAddFile()"><span class="material-icons">add</span></button>
+    <span class="flex items-center text-sm flex-grow ml-2">
+      <span class="font-bold" :innerText="fnName"></span>
+      <span class="text-gray-700">.jsfn.run</span>
+    </span>
   </header>
 `;
 
+@customElement('js-header')
 export class Header extends HTMLElement {
+  fnName = select((s) => s.currentFunction.name || '');
+
   connectedCallback() {
     this.append(t(this));
-  }
-
-  onAddFile() {
-    dispatch('addfile', prompt('File name'));
   }
 
   onReload() {
@@ -25,5 +27,3 @@ export class Header extends HTMLElement {
     dispatch('updatefunctionlist');
   }
 }
-
-customElements.define('js-header', Header);

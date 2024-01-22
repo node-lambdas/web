@@ -128,9 +128,9 @@ const actions = {
   },
 };
 
-const { set, get, react, listen, select, dispatch } = useState(initialState, actions);
+const { set, get, react, watch, listen, select, dispatch } = useState(initialState, actions);
 
-export { set, get, react, listen, select, dispatch };
+export { set, get, react, watch, listen, select, dispatch };
 
 export function getResourceStore() {
   return Store.get(get('storeId'));

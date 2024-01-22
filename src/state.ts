@@ -23,6 +23,11 @@ export function isRef(v): v is Ref<any> {
   return v && v instanceof Ref;
 }
 
+type Watcher<T> = {
+  previous: T | undefined;
+  current: T | undefined;
+};
+
 export function useState<T extends object, A extends string>(initialState: T, actions: Record<A, Function>) {
   const stateChangeEvent = '@@statechange';
   const state = new Proxy(initialState, {
@@ -47,6 +52,32 @@ export function useState<T extends object, A extends string>(initialState: T, ac
     return state[key];
   }
 
+  function watch<V extends any>(input: Ref<V> | ((state: T) => V), observer: (v: V, p: V | undefined) => void) {
+    const tracker: Watcher<V> = {
+      previous: undefined,
+      current: undefined,
+    };
+
+    if (isRef(input)) {
+      tracker.previous = input.value;
+      return react(() => {
+        if (input.value !== tracker.previous) {
+          observer(input.value!, tracker.previous);
+          tracker.current = input.value;
+        }
+      });
+    }
+
+    tracker.previous = input(state);
+    return react(() => {
+      const v = input(state);
+      if (v !== tracker.previous) {
+        observer(v!, tracker.previous);
+        tracker.current = v;
+      }
+    });
+  }
+
   function react(fn: (state: T) => any) {
     const handler = (e: any) => fn(e.detail);
     events.addEventListener(stateChangeEvent, handler);
@@ -61,7 +92,6 @@ export function useState<T extends object, A extends string>(initialState: T, ac
 
   function dispatch(action: A, payload: any = null) {
     events.dispatchEvent(new CustomEvent(action, { detail: payload }));
-    console.log(state);
   }
 
   function select<V>(selector: (state: T) => V): Ref<V> {
@@ -72,5 +102,5 @@ export function useState<T extends object, A extends string>(initialState: T, ac
 
   Object.entries(actions).forEach(([action, handler]) => listen(action, handler as any));
 
-  return { react, listen, select, dispatch, set, get };
+  return { react, listen, select, dispatch, set, get, watch };
 }
