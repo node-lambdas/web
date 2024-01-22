@@ -9,6 +9,8 @@ import {
   events as authEvents,
 } from 'https://auth.homebots.io/index.mjs';
 
+import './assets/codemirror.js';
+
 type FileEntry = { contents: string; meta: Record<string, string> };
 type FunctionEntry = { id: string; binId: string; name: string };
 
