@@ -23,6 +23,7 @@ export const bind = (scope, el, { name, value }) => {
     const initial = fn(scope);
 
     if (isRef(initial)) {
+      el[property] = initial.value;
       return watch(initial, (v) => (el[property] = v));
     }
 

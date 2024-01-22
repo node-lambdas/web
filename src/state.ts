@@ -1,5 +1,7 @@
 class Ref<RefValue> {
   private _value: RefValue | undefined;
+  private _obs: any[] = [];
+
   detach: () => void;
 
   constructor(initial?: RefValue) {
@@ -8,10 +10,15 @@ class Ref<RefValue> {
 
   set value(v: RefValue | undefined) {
     this._value = v;
+    this._obs.forEach((f) => f(v));
   }
 
   get value() {
     return this._value;
+  }
+
+  observe(fn: (value: RefValue) => void) {
+    this._obs.push(fn);
   }
 
   toString() {
@@ -60,12 +67,14 @@ export function useState<T extends object, A extends string>(initialState: T, ac
 
     if (isRef(input)) {
       tracker.previous = input.value;
-      return react(() => {
-        if (input.value !== tracker.previous) {
-          observer(input.value!, tracker.previous);
-          tracker.current = input.value;
+      input.observe((value) => {
+        if (value !== tracker.previous) {
+          observer(value, tracker.previous);
+          tracker.previous = tracker.current;
+          tracker.current = value;
         }
       });
+      return;
     }
 
     tracker.previous = input(state);
@@ -73,6 +82,7 @@ export function useState<T extends object, A extends string>(initialState: T, ac
       const v = input(state);
       if (v !== tracker.previous) {
         observer(v!, tracker.previous);
+        tracker.previous = tracker.current;
         tracker.current = v;
       }
     });
