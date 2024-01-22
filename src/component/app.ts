@@ -30,6 +30,8 @@ export class App extends HTMLElement {
 
   connectedCallback() {
     this.append(t(this));
+    dispatch('updatefilelist');
+    dispatch('updatefunctionlist');
   }
 
   disconnectedCallback() {}
