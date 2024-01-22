@@ -1,4 +1,4 @@
-import '../assets/codemirror.js';
+import CodeMirror from '../assets/codemirror.js';
 import { property } from './decorators.js';
 
 class Editor extends HTMLElement {
@@ -21,7 +21,7 @@ class Editor extends HTMLElement {
 
   constructor() {
     super();
-    const editor = (window as any).CodeMirror(this, { lineNumbers: true });
+    const editor: any = new CodeMirror(this, { lineNumbers: true });
     this.editor = editor;
 
     editor.getWrapperElement().style.fontSize = '12px';
