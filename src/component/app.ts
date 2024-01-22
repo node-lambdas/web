@@ -12,7 +12,7 @@ const t = html`<div class="flex flex-col h-screen w-full">
       <js-topbar></js-topbar>
       <div class="w-full flex-grow text-sm flex flex-col">
         <js-editortoolbar :hidden="noFileOpen"></js-editortoolbar>
-        <js-editor :hidden="noFileOpen" :value="fileContents" class="flex-grow"></js-editor>
+        <js-editor :hidden="noFileOpen" class="flex-grow"></js-editor>
       </div>
     </main>
   </div>
@@ -21,7 +21,6 @@ const t = html`<div class="flex flex-col h-screen w-full">
 @customElement('js-app')
 export class App extends HTMLElement {
   noFileOpen = select((s) => !s.currentFile?.meta?.id);
-  fileContents = select((s) => s.currentFile?.contents);
 
   async onStart() {
     await onSetupAuth();
