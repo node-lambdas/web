@@ -17,19 +17,18 @@ export const bind = (scope, el, { name, value }) => {
   }
 
   if (name.startsWith(':')) {
-    const fn = AsyncFn('scope', `with (scope) { return await (${value}) }`);
+    const fn = Function('scope', `with (scope) { return (${value}) }`);
+    const fnAsync = AsyncFn('scope', `with (scope) { return await (${value}) }`);
     const property = name.slice(1);
     const initial = fn(scope);
 
     if (isRef(initial)) {
-      watch(initial, (v) => (el[property] = v));
-      return;
+      return watch(initial, (v) => (el[property] = v));
     }
 
-    react(async () => {
-      let value = fn(scope);
-      value.catch(() => '[error]').then((v) => (el[property] = isRef(v) ? v.value : v));
-    });
+    const apply = (value) => value.catch((e) => e).then((v) => (el[property] = v));
+    apply(fnAsync(scope));
+    react(() => apply(fnAsync(scope)));
   }
 };
 
