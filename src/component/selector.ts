@@ -5,18 +5,16 @@ import { dispatch, react, select } from '../store';
 export class Selector extends HTMLElement {
   options = select((s) => s.functionList.map((f) => ({ label: f.name, value: f })));
 
-  onSelect(value) {
-    dispatch('selectfunction', value);
-  }
-
   connectedCallback() {
     this.innerHTML = `<select class="bg-transparent w-full"></select>`;
     const selector = this.querySelector('select') as HTMLSelectElement;
 
     selector.onchange = () => {
       const index = selector.selectedIndex;
-      if (index === 0) return;
-      this.onSelect(this.options.value?.[index - 1].value);
+      if (index > 0) {
+        const v = this.options.value?.[index - 1];
+        dispatch('selectfunction', v?.value);
+      }
     };
 
     react(() => this.render());

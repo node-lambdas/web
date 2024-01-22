@@ -6,7 +6,7 @@ const t = html`<div class="flex flex-col h-screen w-full">
   <div class="flex flex-1 overflow-hidden">
     <aside class="w-64 border-r overflow-y-auto">
       <js-header></js-header>
-      <js-filelist :list="fileList"></js-filelist>
+      <js-filelist></js-filelist>
     </aside>
     <main class="flex-1 flex flex-col items-stretch shadow-lg">
       <js-topbar></js-topbar>
@@ -20,8 +20,6 @@ const t = html`<div class="flex flex-col h-screen w-full">
 
 @customElement('js-app')
 export class App extends HTMLElement {
-  fileList = select((s) => s.fileList);
-
   constructor() {
     super();
   }

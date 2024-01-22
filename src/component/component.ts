@@ -12,16 +12,16 @@ export const bind = (scope, el, { name, value }) => {
 
   if (name.startsWith(':')) {
     const fn = AsyncFn('scope', `with (scope) { return await (${value}) }`);
-    const p = name.slice(1);
+    const property = name.slice(1);
 
     react(async () => {
       let p = fn(scope);
 
       p.catch(() => '[error]').then((v) => {
         if (isRef(v)) {
-          el[p] = v.value;
+          el[property] = v.value;
         } else {
-          el[p] = v;
+          el[property] = v;
         }
       });
     });
