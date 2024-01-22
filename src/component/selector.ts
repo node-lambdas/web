@@ -14,8 +14,9 @@ export class Selector extends HTMLElement {
     const selector = this.querySelector('select') as HTMLSelectElement;
 
     selector.onchange = () => {
-      const index = Number(selector.options[selector.selectedIndex + 1].value);
-      this.onSelect(this.options[index].value);
+      const index = selector.selectedIndex;
+      if (index === 0) return;
+      this.onSelect(this.options[index - 1].value);
     };
 
     react(() => this.render());
@@ -27,9 +28,8 @@ export class Selector extends HTMLElement {
 
     s.innerHTML = '';
 
-    options.map((option, index) => {
+    options.map((option) => {
       const o = document.createElement('option');
-      o.value = String(index);
       o.innerText = option.label;
       s.append(o);
     });
