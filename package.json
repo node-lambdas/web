@@ -6,7 +6,7 @@
   "zmain": "./server/index.mjs",
   "scripts": {
     "ci": "npm i --no-fund --no-audit && npm run build",
-    "build": "vue-tsc && vite build --assetsInlineLimit=0",
+    "build": "vite build --assetsInlineLimit=0",
     "dev": "vite",
     "preview": "vite preview"
   },
