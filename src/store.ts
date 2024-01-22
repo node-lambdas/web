@@ -43,12 +43,7 @@ const actions = {
 
     await getResourceStore().getResource('fn').set(id, fn);
 
-    dispatch('select', fn);
-  },
-
-  select(fn: FunctionEntry) {
-    set('binId', fn.binId);
-    dispatch('updatefilelist');
+    dispatch('selectfunction', fn);
   },
 
   async addfile(name: string) {
@@ -97,6 +92,7 @@ const actions = {
       writeFile(get('binId'), currentFile.meta.id, currentFile.contents);
     }
   },
+
   updatecontent(value) {
     const currentFile = get('currentFile');
     set('currentFile', {
@@ -104,6 +100,7 @@ const actions = {
       contents: value,
     });
   },
+
   async updatefunctionlist() {
     set('functionList', await getResourceStore().getResource('fn').list());
   },
@@ -123,6 +120,11 @@ const actions = {
 
   selectfile(file) {
     set('currentFile', file);
+  },
+
+  selectfunction(fn: FunctionEntry) {
+    set('binId', fn.binId);
+    dispatch('updatefilelist');
   },
 };
 

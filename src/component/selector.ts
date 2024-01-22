@@ -1,12 +1,12 @@
 import { customElement } from '../decorators';
-import { react, select } from '../store';
+import { dispatch, react, select } from '../store';
 
 @customElement('js-selector')
 export class Selector extends HTMLElement {
   options = select((s) => s.functionList.map((f) => ({ label: f.name, value: f })));
 
   onSelect(value) {
-    this.dispatchEvent(new CustomEvent('select', { detail: value }));
+    dispatch('selectfunction', value);
   }
 
   connectedCallback() {
