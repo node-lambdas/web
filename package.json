@@ -5,6 +5,12 @@
   "prettier": "@cloud-cli/prettier-config",
   "zmain": "./server/index.mjs",
   "devDependencies": {
-    "@cloud-cli/prettier-config": "^1.0.0"
+    "@cloud-cli/prettier-config": "^1.0.0",
+    "@vitejs/plugin-vue": "^4.6.2",
+    "typescript": "^5.3.3",
+    "vite": "^4.5.2",
+    "vue": "^3.4.15",
+    "vue-router": "^4.2.5",
+    "vue-tsc": "^1.8.27"
   }
 }
