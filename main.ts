@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   let store;
 
   const codeMirror = await getEditor();
-  const homeBtn = document.getElementById('homeBtn');
+  const homeBtn = document.getElementById('homeBtn')!;
   const saveBtn = document.getElementById('saveBtn') as HTMLButtonElement;
   const filename = document.getElementById('filename')!;
   const editor = document.getElementById('editor')!;
@@ -50,6 +50,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     window.addEventListener('resize', () => codeMirror.refresh());
     setTimeout(() => codeMirror.refresh(), 1);
 
+    codeMirror.on('change', () => {
+      saveBtn.disabled = false;
+      currentFile.contents = codeMirror.getValue();
+    });
+
     return codeMirror;
   }
 
@@ -62,16 +67,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  codeMirror.on('change', () => {
-    saveBtn.disabled = false;
-    currentFile.contents = codeMirror.getValue();
-  });
-
   function onSave() {
     if (currentFile.meta?.id) {
-      const value = codeMirror.getValue();
-      writeFile(binId, currentFile.meta.id, value);
-      currentFile.contents = value;
+      writeFile(binId, currentFile.meta.id, currentFile.contents);
     }
   }
 
