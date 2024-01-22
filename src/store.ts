@@ -66,6 +66,9 @@ const actions = {
   async updatefilelist() {
     const list: FileEntry[] = [];
     const binId = get('binId');
+
+    if (!binId) return;
+
     const fileIds = await listFiles(binId);
 
     for (const fileId of fileIds) {

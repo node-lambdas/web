@@ -1,5 +1,5 @@
 import { EventDelegate } from 'es-eventdelegate';
-import { EventEmitter, customElement, emitter, property } from '../decorators.js';
+import { EventEmitter, customElement, emitter } from '../decorators.js';
 import { FileEntry } from '../types';
 import { react } from '../store.js';
 import { html } from './component.js';

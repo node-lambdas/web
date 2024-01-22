@@ -6,7 +6,7 @@ import { html } from './component.js';
 const t = html`<div class="flex h-12 justify-end items-center p-3 border-b space-x-2">
   <div class="flex-grow text-sm font-medium" :innerText="fnName"></div>
   <div class="flex items-center p-2 bg-gray-100 rounded">
-    <js-selector class="w-64" :options="options"></js-selector>
+    <js-selector class="w-64"></js-selector>
     <span class="w-0 h-4 mx-2 block border-l border-gray-400"></span>
     <button class="w-6 h-6" @click="onCreate()"><span class="material-icons">add</span></button>
   </div>
@@ -24,7 +24,6 @@ const t = html`<div class="flex h-12 justify-end items-center p-3 border-b space
 export class Topbar extends HTMLElement {
   private fn: any;
 
-  options = select((s) => s.functionList.map((f) => ({ label: f.name, value: f })));
   fnName = select((s) => s.currentFunction?.name || '');
 
   connectedCallback() {
