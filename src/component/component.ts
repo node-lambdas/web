@@ -1,5 +1,5 @@
 import { parse, materialize, normalize } from '@homebots/parse-html';
-import { react, watch } from '../store';
+import { dispatch, react, watch } from '../store';
 import { isRef } from '../state';
 
 const AsyncFn = Object.getPrototypeOf(async () => {}).constructor;
@@ -8,6 +8,12 @@ export const bind = (scope, el, { name, value }) => {
   if (name.startsWith('@')) {
     const fn = Function('scope', '$event', `with (scope) { return (${value}) }`);
     el.addEventListener(name.slice(1), (e) => fn(scope, e));
+  }
+
+  if (name.startsWith('^')) {
+    const event = name.slice(1);
+    el.addEventListener(event, () => dispatch(value.trim()));
+    return;
   }
 
   if (name.startsWith(':')) {

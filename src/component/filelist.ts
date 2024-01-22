@@ -11,7 +11,7 @@ const t = html`
 
 const line = html`<a
   href="#"
-  @click="onSelect(file)"
+  @click="dispatch('selectfile', file)"
   class="flex items-center space-x-1 hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-1"
 >
   <span class="icon icon-file"></span>
@@ -28,15 +28,16 @@ export class FileList extends HTMLElement {
 
     watch(this.fileList, (list) => {
       nav.innerHTML = '';
-      list.map((file) => nav.append(line({ file })));
+
+      for (const file of list) {
+        const f = line({ file, dispatch });
+
+        nav.append(f);
+      }
     });
   }
 
   onAddFile() {
     dispatch('addfile', prompt('File name'));
-  }
-
-  onSelect(file) {
-    dispatch('selectfile', file);
   }
 }
