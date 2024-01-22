@@ -1,19 +1,22 @@
-import { property } from './decorators';
+import { customElement, property } from '../decorators';
 
+@customElement('js-selector')
 export class Selector extends HTMLElement {
   @property([]) options;
 
-  constructor() {
-    super();
-    this.innerHTML = `<select class="bg-transparent w-full"></select>`;
-    const s = this.querySelector('select') as HTMLSelectElement;
-    s.onchange = () => {
-      const index = Number(s.options[s.selectedIndex].value);
-      this.dispatchEvent(new CustomEvent('select', { detail: this.options[index] }));
-    };
+  onSelect(value) {
+    this.dispatchEvent(new CustomEvent('select', { detail: value }));
   }
 
-  connectedCallback() {}
+  connectedCallback() {
+    this.innerHTML = `<select class="bg-transparent w-full"></select>`;
+    const s = this.querySelector('select') as HTMLSelectElement;
+
+    s.onchange = () => {
+      const index = Number(s.options[s.selectedIndex + 1].value);
+      this.onSelect(this.options[index].value);
+    };
+  }
 
   render() {
     const s = this.querySelector('select') as HTMLSelectElement;
@@ -21,5 +24,3 @@ export class Selector extends HTMLElement {
     s.innerHTML = options.map((option, index) => `<option value="${index}">${option.label}</option>`).join('');
   }
 }
-
-customElements.define('js-selector', Selector);

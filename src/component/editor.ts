@@ -1,5 +1,5 @@
-import CodeMirror from '../assets/codemirror.js';
-import { property } from './decorators.js';
+import CodeMirror from '../../assets/codemirror.js';
+import { property } from '../decorators.js';
 
 class Editor extends HTMLElement {
   private editor: any = null;

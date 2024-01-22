@@ -1,3 +1,5 @@
+export const Init = Symbol('@@init');
+
 export class EventEmitter<T = any> {
   constructor(private t: HTMLElement, private e: string) {}
 
@@ -36,7 +38,7 @@ export function property(defaultValue: any = null) {
   };
 }
 
-export function child(selector) {
+export function child(selector: string) {
   return (target, property) => {
     Object.defineProperty(target, property, {
       set() {
@@ -46,5 +48,29 @@ export function child(selector) {
         return this.querySelector(selector);
       },
     });
+  };
+}
+
+export function customElement(tag: string) {
+  return (target: any, _t: any) => {
+    class Component extends target {
+      [Init]: Array<Function | [Function, any]>;
+
+      constructor() {
+        super();
+        this[Init] = [];
+      }
+
+      connectedCallback() {
+        if (this.isConnected) {
+          this[Init].forEach((fn) => (typeof fn === 'function' ? fn(this) : fn[0](this, fn[1])));
+          this[Init].length = 0;
+        }
+
+        super.connectedCallback();
+      }
+    }
+
+    customElements.define(tag, Component as any);
   };
 }

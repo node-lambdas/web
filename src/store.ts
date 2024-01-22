@@ -1,14 +1,25 @@
 import { Store } from 'https://store.homebots.io/index.mjs';
-import { listFiles, readMetadata, readFile, writeFile, createBin } from 'https://bin.homebots.io/index.mjs';
+import {
+  listFiles,
+  writeMetadata,
+  readMetadata,
+  readFile,
+  writeFile,
+  createFile,
+  createBin,
+} from 'https://bin.homebots.io/index.mjs';
 import {
   getProfile,
   getProperty,
   setProperty,
   signIn,
   signOut,
+  isAuthenticated,
   events as authEvents,
 } from 'https://auth.jsfn.run/index.mjs';
+
 import { FileEntry, FunctionEntry } from './types';
+import { useState } from './state.js';
 
 const initialState = {
   fileList: [] as FileEntry[],
@@ -20,98 +31,115 @@ const initialState = {
   currentFile: null as FileEntry | null,
 };
 
-const state = new Proxy(initialState, {
-  get(target, p) {
-    return target[p];
-  },
-  set(target, p, value) {
-    target[p] = value;
-    events.dispatchEvent(new CustomEvent('change', { detail: { ...target } }));
-    return true;
-  },
-});
+const actions = {
+  async create() {
+    const id = crypto.randomUUID();
+    const name = prompt('Function name');
 
-let events = new EventTarget();
+    if (!name) return;
 
-export function listen(fn) {
-  return events.addEventListener('change', fn);
-}
+    const { binId } = await createBin();
+    const fn = { id, binId, name };
+
+    await getResourceStore().getResource('fn').set(id, fn);
+
+    dispatch('select', fn);
+  },
+
+  select(fn: FunctionEntry) {
+    set('binId', fn.binId);
+    dispatch('updatefilelist');
+  },
+
+  async addfile(name: string) {
+    if (!name) return;
+
+    const binId = get('binId');
+    if (!binId) return;
+
+    const { fileId } = await createFile(binId);
+    await writeMetadata(binId, fileId, { name });
+
+    dispatch('updatefilelist');
+  },
+
+  async updatefilelist() {
+    const list: FileEntry[] = [];
+    const binId = get('binId');
+    const fileIds = await listFiles(binId);
+
+    for (const fileId of fileIds) {
+      const meta = await readMetadata(binId, fileId);
+      const file = { meta, contents: '' };
+      list.push(file);
+      const contents = await readFile(binId, fileId);
+      file.contents = await contents.text();
+    }
+
+    set('fileList', list);
+  },
+
+  async updateauth() {
+    try {
+      const p = await getProfile();
+      set('profileId', p.id);
+    } catch {
+      set('profileId', '');
+    }
+  },
+
+  save() {
+    const currentFile = get('currentFile');
+    if (currentFile?.meta?.id) {
+      writeFile(get('binId'), currentFile.meta.id, currentFile.contents);
+    }
+  },
+  updatecontent(value) {
+    const currentFile = get('currentFile');
+    set('currentFile', {
+      meta: currentFile?.meta,
+      contents: value,
+    });
+  },
+  async updatefunctionlist() {
+    set('functionList', await getResourceStore().getResource('fn').list());
+  },
+
+  async signin() {
+    try {
+      const isAuth = await isAuthenticated();
+      if (!isAuth) {
+        signIn(true);
+      }
+    } catch {}
+  },
+
+  async signout() {
+    await signOut();
+  },
+
+  selectfile(file) {
+    set('currentFile', file);
+  },
+};
+
+const { set, get, react, listen, select, dispatch } = useState(initialState, actions);
+
+export { set, get, react, listen, select, dispatch };
 
 export function getResourceStore() {
-  return Store.get(state.storeId);
-}
-
-export async function onCreateFunction() {
-  const id = crypto.randomUUID();
-  const name = prompt('Function name');
-
-  if (!name) return;
-
-  const { binId } = await createBin();
-  const fn = { id, binId, name };
-
-  await getResourceStore().getResource('fn').set(id, fn);
-  onSelectFunction(fn);
-}
-
-export async function onSelectFunction(fn) {
-  state.binId = fn.binId;
-  onUpdateFileList();
-}
-
-async function getFileList() {
-  const list: FileEntry[] = [];
-  const fileIds = await listFiles(state.binId);
-
-  for (const fileId of fileIds) {
-    const meta = await readMetadata(state.binId, fileId);
-    const file = { meta, contents: '' };
-    list.push(file);
-    const contents = await readFile(state.binId, fileId);
-    file.contents = await contents.text();
-  }
-
-  return list;
-}
-
-async function onUpdateAuth() {
-  try {
-    const p = await getProfile();
-    state.profileId = p.id;
-  } catch {
-    state.profileId = '';
-  }
-}
-
-export function onSave() {
-  if (state.currentFile?.meta?.id) {
-    writeFile(state.binId, state.currentFile.meta.id, state.currentFile.contents);
-  }
-}
-
-export function onEditorValueChange(value) {
-  state.currentFile = {
-    meta: state.currentFile?.meta,
-    contents: value,
-  };
-}
-
-export async function onUpdateFileList() {
-  state.fileList = await getFileList();
-}
-
-export async function onUpdateFunctionList() {
-  state.functionList = await getResourceStore().getResource('fn').list();
+  return Store.get(get('storeId'));
 }
 
 export async function onSetupAuth() {
-  onUpdateAuth();
+  const updateAuth = () => dispatch('updateauth');
 
-  authEvents.addEventListener('signin', onUpdateAuth);
-  authEvents.addEventListener('signout', onUpdateAuth);
+  authEvents.addEventListener('signin', updateAuth);
+  authEvents.addEventListener('signout', updateAuth);
 
   try {
-    return await getProfile();
+    await isAuthenticated();
+    updateAuth();
   } catch {
     return new Promise((resolve) => {
       authEvents.addEventListener('signin', (e) => resolve(e.detail));
@@ -127,21 +155,5 @@ export async function onSetupStore() {
     await setProperty('jsfn:storeId', storeId);
   }
 
-  state.storeId = storeId;
-}
-
-export async function onSignIn() {
-  try {
-    await getProfile();
-    return signOut();
-  } catch {
-    signIn(true);
-  }
-}
-
-export function onSelectFile(file) {
-  state.currentFile = file;
-  // filename.innerText = file.meta.name;
-  // codeMirror.setValue(file.contents);
-  // saveBtn.disabled = true;
+  set('storeId', storeId);
 }

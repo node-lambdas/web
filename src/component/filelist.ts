@@ -1,6 +1,6 @@
 import { EventDelegate } from 'es-eventdelegate';
-import { EventEmitter, emitter, property } from './decorators';
-import { FileEntry } from './types';
+import { EventEmitter, emitter, property } from '../decorators';
+import { FileEntry } from '../types';
 
 export class FileList extends HTMLElement {
   @property([]) private list: FileEntry[];
@@ -13,7 +13,7 @@ export class FileList extends HTMLElement {
 
   onSelect(event) {
     console.log(event);
-    // this.select.emit();
+    this.select.emit(event);
   }
 
   render() {
@@ -22,10 +22,10 @@ export class FileList extends HTMLElement {
       this.list
         .map(
           (file) => `<a data-id="${
-            file.meta.id
+            file?.meta?.id
           }" href="#" class="flex items-center space-x-1 hover:bg-gray-100 dark:hover:bg-gray-800 px-2 py-1">
         <span class="icon icon-file"></span>
-        <span class="file-link truncate text-sm font-medium">${file.meta.name || file.meta.id}</span>
+        <span class="file-link truncate text-sm font-medium">${file?.meta?.name || file?.meta?.id}</span>
       </a>`,
         )
         .join('') +
