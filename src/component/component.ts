@@ -18,7 +18,6 @@ export const bind = (scope, el, { name, value }) => {
 
   if (name.startsWith(':')) {
     const fn = Function('scope', `with (scope) { return (${value}) }`);
-    const fnAsync = AsyncFn('scope', `with (scope) { return await (${value}) }`);
     const property = name.slice(1);
     const initial = fn(scope);
 
@@ -28,6 +27,7 @@ export const bind = (scope, el, { name, value }) => {
     }
 
     const apply = (value) => value.catch((e) => e).then((v) => (el[property] = v));
+    const fnAsync = AsyncFn('scope', `with (scope) { return await (${value}) }`);
     apply(fnAsync(scope));
     react(() => apply(fnAsync(scope)));
   }

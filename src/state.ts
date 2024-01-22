@@ -30,11 +30,6 @@ export function isRef(v): v is Ref<any> {
   return v && v instanceof Ref;
 }
 
-type Watcher<T> = {
-  previous: T | undefined;
-  current: T | undefined;
-};
-
 export function useState<T extends object, A extends string>(initialState: T, actions: Record<A, Function>) {
   const stateChangeEvent = '@@statechange';
   const state = new Proxy(initialState, {
@@ -60,30 +55,27 @@ export function useState<T extends object, A extends string>(initialState: T, ac
   }
 
   function watch<V extends any>(input: Ref<V> | ((state: T) => V), observer: (v: V, p: V | undefined) => void) {
-    const tracker: Watcher<V> = {
-      previous: undefined,
-      current: undefined,
-    };
+    let lastValue: V;
 
     if (isRef(input)) {
-      tracker.previous = input.value;
+      lastValue = input.value!;
+      observer(lastValue, undefined);
       input.observe((value) => {
-        if (value !== tracker.previous) {
-          observer(value, tracker.previous);
-          tracker.previous = tracker.current;
-          tracker.current = value;
+        if (value !== lastValue) {
+          observer(value, lastValue);
+          lastValue = value;
         }
       });
       return;
     }
 
-    tracker.previous = input(state);
+    lastValue = input(state);
+    observer(lastValue, undefined);
     return react(() => {
       const v = input(state);
-      if (v !== tracker.previous) {
-        observer(v!, tracker.previous);
-        tracker.previous = tracker.current;
-        tracker.current = v;
+      if (v !== lastValue) {
+        observer(v!, lastValue);
+        lastValue = v;
       }
     });
   }
