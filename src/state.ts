@@ -15,6 +15,10 @@ class Ref<RefValue> {
   }
 }
 
+export function isRef(v): v is Ref<any> {
+  return v && v instanceof Ref;
+}
+
 export function useState<T extends object, A extends string>(initialState: T, actions: Record<A, Function>) {
   const stateChangeEvent = '@@statechange';
   const state = new Proxy(initialState, {

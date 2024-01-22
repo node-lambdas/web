@@ -1,5 +1,6 @@
 import { parse, materialize, normalize } from '@homebots/parse-html';
 import { react } from '../store';
+import { isRef } from '../state';
 
 const AsyncFn = Object.getPrototypeOf(async () => {}).constructor;
 
@@ -14,7 +15,15 @@ export const bind = (scope, el, { name, value }) => {
     const p = name.slice(1);
 
     react(async () => {
-      el[p] = await fn(scope);
+      let p = fn(scope);
+
+      p.catch(() => '[error]').then((v) => {
+        if (isRef(v)) {
+          el[p] = v.value;
+        } else {
+          el[p] = v;
+        }
+      });
     });
   }
 };

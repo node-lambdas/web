@@ -1,10 +1,13 @@
 import { EventDelegate } from 'es-eventdelegate';
 import { EventEmitter, emitter, property } from '../decorators';
 import { FileEntry } from '../types';
+import { select } from '../store';
 
 export class FileList extends HTMLElement {
   @property([]) private list: FileEntry[];
   @emitter() private select: EventEmitter<FileEntry>;
+
+  fileList = select((s) => s.fileList);
 
   connectedCallback() {
     const d = new EventDelegate(this);

@@ -1,4 +1,4 @@
-import { child, customElement } from '../decorators';
+import { customElement } from '../decorators';
 import { dispatch, select } from '../store';
 import { html } from './component';
 
@@ -20,10 +20,7 @@ const t = html`<div class="flex flex-col h-screen w-full">
 
 @customElement('js-app')
 export class App extends HTMLElement {
-  @child('js-editor') edRef;
-
   fileList = select((s) => s.fileList);
-  fileName = select((s) => s.currentFile?.meta?.name || '');
 
   constructor() {
     super();
