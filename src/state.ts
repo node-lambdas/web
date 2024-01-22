@@ -10,6 +10,10 @@ class Ref<RefValue> {
     this._value = v;
   }
 
+  get value() {
+    return this._value;
+  }
+
   toString() {
     return String(this._value);
   }
@@ -43,7 +47,7 @@ export function useState<T extends object, A extends string>(initialState: T, ac
     return state[key];
   }
 
-  function react<T>(fn: (state: T) => any) {
+  function react(fn: (state: T) => any) {
     const handler = (e: any) => fn(e.detail);
     events.addEventListener(stateChangeEvent, handler);
     return () => events.removeEventListener(stateChangeEvent, handler);

@@ -6,6 +6,7 @@
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "experimentalDecorators": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -24,5 +25,4 @@
   },
   "include": ["app/src/**/*.ts", "app/src/**/*.d.ts", "app/src/**/*.tsx", "app/src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
-
 }
