@@ -10,7 +10,7 @@ export class EventEmitter<T = any> {
 
 export function emitter(name?: string) {
   return (target, property) => {
-    Object.defineProperty(target, property, {
+    Object.defineProperty(target.prototype, property, {
       get() {
         return new EventEmitter(this, name || property);
       },
@@ -21,7 +21,7 @@ export function emitter(name?: string) {
 export function property(defaultValue: any = null) {
   return (target, property) => {
     const t = '_' + property;
-    Object.defineProperty(target, property, {
+    Object.defineProperty(target.constructor.prototype || target.prototype, property, {
       get() {
         return this[t] || defaultValue;
       },
@@ -40,7 +40,7 @@ export function property(defaultValue: any = null) {
 
 export function child(selector: string) {
   return (target, property) => {
-    Object.defineProperty(target, property, {
+    Object.defineProperty(target.constructor.prototype || target.prototype, property, {
       set() {
         return true;
       },

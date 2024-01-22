@@ -20,20 +20,16 @@ class Editor extends HTMLElement {
     this.editor.setValue(this.value);
   }
 
-  constructor() {
-    super();
-    const editor: any = new CodeMirror(this, { lineNumbers: true });
-    this.editor = editor;
-
-    editor.getWrapperElement().style.fontSize = '12px';
-    editor.on('change', () => {
-      dispatch('updatecontent', this.valueInternal);
-      // this.dispatchEvent(new CustomEvent('change', { detail: this.valueInternal }));
-    });
-  }
-
   connectedCallback() {
     if (this.isConnected) {
+      const editor: any = new CodeMirror(this, { lineNumbers: true });
+      this.editor = editor;
+
+      editor.getWrapperElement().style.fontSize = '12px';
+      editor.on('change', () => {
+        dispatch('updatecontent', this.valueInternal);
+        // this.dispatchEvent(new CustomEvent('change', { detail: this.valueInternal }));
+      });
       this.editor.refresh();
       this.handler = window.addEventListener('resize', () => this.editor.refresh());
     }
