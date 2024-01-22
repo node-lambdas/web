@@ -125,6 +125,8 @@ const actions = {
   selectfunction(fn: FunctionEntry) {
     set('binId', fn.binId);
     dispatch('updatefilelist');
+    set('currentFile', null);
+    set('currentFunction', fn);
   },
 };
 
