@@ -16,7 +16,7 @@ export class Selector extends HTMLElement {
     selector.onchange = () => {
       const index = selector.selectedIndex;
       if (index === 0) return;
-      this.onSelect(this.options[index - 1].value);
+      this.onSelect(this.options.value?.[index - 1].value);
     };
 
     react(() => this.render());
