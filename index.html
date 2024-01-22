@@ -12,57 +12,7 @@
     <link rel="stylesheet" href="/assets/codemirror.css" />
   </head>
   <body>
-    <div class="flex flex-col h-screen w-full">
-      <div class="flex flex-1 overflow-hidden">
-        <aside class="w-64 border-r overflow-y-auto">
-          <header class="flex h-12 items-center px-4 border-b">
-            <a href="#" id="homeBtn"
-              ><img class="w-6 h-6 rounded" src="https://avatars.githubusercontent.com/u/69599650?s=24&v=4" alt="" />
-            </a>
-            <span class="text-sm flex-grow ml-2 font-bold">jsfn.run</span>
-            <button class="w-6 h-6"><span class="material-icons">add</span></button>
-          </header>
-          <nav class="py-4 space-y-1">
-            <div class="flex items-center justify-end">
-              <button id="addFileBtn"></button>
-            </div>
-            <div id="files"></div>
-          </nav>
-        </aside>
-        <main class="flex-1 flex flex-col items-stretch shadow-lg">
-          <div class="flex h-12 justify-end items-center py-3 px-6 border-b space-x-2">
-            <div class="flex-grow text-sm font-medium" id="fnName"></div>
-            <div class="flex items-center p-2 bg-gray-100 rounded">
-              <select class="w-64 bg-transparent" id="fnSelector"></select>
-              <span class="w-0 h-4 ml-2 block border-l border-gray-400"></span>
-              <button class="w-6 h-6" id="fnAdd"><span class="material-icons">add</span></button>
-            </div>
-
-            <span class="w-0 h-4 block border-l border-gray-600"></span>
-            <button
-              id="signInBtn"
-              class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-white px-3 py-1"
-            >
-              Sign In
-            </button>
-          </div>
-          <div class="w-full flex-grow text-sm flex flex-col">
-            <div class="flex w-full bg-gray-100 p-2">
-              <span class="font-bold text-sm text-gray-600 truncate flex-grow" id="filename"></span>
-              <button
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:bg-gray-400 bg-blue-500 text-white hover:bg-blue-600 px-3 py-1"
-                id="saveBtn"
-              >
-                Save
-              </button>
-            </div>
-
-            <div class="flex-grow" id="editor"></div>
-          </div>
-          <div class=""></div>
-        </main>
-      </div>
-    </div>
+    <js-app></js-app>
     <script type="module" src="./main.ts"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q1WFHNM1L8"></script>
     <script>
