@@ -1,6 +1,7 @@
 import { customElement } from './decorators.js';
 import { dispatch, onSetupAuth, onSetupStore, select } from '../store.js';
 import { html } from './component.js';
+import './preview.js';
 
 const t = html`<div class="flex h-screen w-screen">
   <aside class="w-72 border-r overflow-y-auto">
@@ -12,6 +13,7 @@ const t = html`<div class="flex h-screen w-screen">
     <div class="w-full flex-grow text-sm flex flex-col">
       <js-editortoolbar :hidden="noFileOpen"></js-editortoolbar>
       <js-editor :hidden="noFileOpen" class="flex-grow overflow-y-auto"></js-editor>
+      <js-preview :hidden="noPreview"></js-preview>
     </div>
   </main>
 </div>`;
@@ -19,7 +21,8 @@ const t = html`<div class="flex h-screen w-screen">
 @customElement('js-app')
 export class App extends HTMLElement {
   noFileOpen = select((s) => !s.currentFile?.meta?.id);
-  noFunctionSelected = select((s) => !s.currentFunction.id);
+  noFunctionSelected = select((s) => !s.currentFunction?.id);
+  noPreview = select((s) => !!s.currentFile || !s.fileList.find((f) => f.meta?.name === 'readme.md'));
 
   async onStart() {
     await onSetupAuth();

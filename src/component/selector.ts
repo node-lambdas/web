@@ -17,7 +17,8 @@ const t = html`
 export class Selector extends HTMLElement {
   options = select((s) => s.functionList);
   noFunctions = select((s) => !s.functionList?.length);
-  noFunctionSelected = select((s) => !s.currentFunction.id);
+  noFunctionSelected = select((s) => !s.currentFunction?.id);
+  selected = select((s) => s.currentFunction?.id || '');
 
   connectedCallback() {
     this.append(t(this));
@@ -40,7 +41,7 @@ export class Selector extends HTMLElement {
     const s = this.querySelector('select') as HTMLSelectElement;
     const mappedOptions = this.options.value!.map((f) => ({ label: f.name, value: f }));
     const options = [
-      { label: `${this.getAttribute('placeholder') || 'Select an option'}`, value: null },
+      { label: `${this.getAttribute('placeholder') || 'Select an option'}`, value: { id: '' } },
       ...mappedOptions,
     ];
 
@@ -49,6 +50,7 @@ export class Selector extends HTMLElement {
     options.map((option) => {
       const o = document.createElement('option');
       o.innerText = option.label;
+      o.selected = this.selected.value === option.value.id;
       s.append(o);
     });
   }

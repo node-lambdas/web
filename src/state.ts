@@ -88,7 +88,8 @@ export function useState<T extends object, A extends string>(initialState: T, ac
   }
 
   async function dispatch(action: A, payload: any = null) {
-    return void (await actions[action](payload));
+    await actions[action](payload);
+    onStateChange(state);
   }
 
   function select<V>(selector: (state: T) => V): Ref<V> {

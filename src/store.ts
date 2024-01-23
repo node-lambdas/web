@@ -24,11 +24,11 @@ import { useState } from './state.js';
 const initialState = {
   fileList: [] as FileEntry[],
   functionList: [] as FunctionEntry[],
-  currentFunction: {} as FunctionEntry,
+  currentFunction: {} as FunctionEntry | null,
+  currentFile: null as FileEntry | null,
   binId: '',
   storeId: '',
   profileId: '',
-  currentFile: null as FileEntry | null,
 };
 
 const actions = {
@@ -52,6 +52,9 @@ const actions = {
 
   async editname() {
     const fn = get('currentFunction');
+
+    if (!fn) return;
+
     const name = prompt('Name', fn.name) || '';
 
     if (!name) return;
@@ -145,11 +148,12 @@ const actions = {
     set('currentFile', file);
   },
 
-  selectfunction(fn: FunctionEntry) {
+  async selectfunction(fn: FunctionEntry) {
     set('binId', fn.binId);
     set('currentFile', null);
     set('currentFunction', fn);
-    dispatch('updatefilelist');
+
+    await dispatch('updatefilelist');
   },
 
   async reload() {

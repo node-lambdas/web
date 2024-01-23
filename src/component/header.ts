@@ -27,7 +27,7 @@ const t = html`
 
 @customElement('js-header')
 export class Header extends HTMLElement {
-  fnName = select((s) => s.currentFunction.name || '');
+  fnName = select((s) => s.currentFunction?.name || '');
   downloadUrl = select((s) => (s.binId ? getDownloadUrl(s.binId) : ''));
 
   connectedCallback() {
