@@ -1,5 +1,5 @@
 import { customElement } from './decorators.js';
-import { dispatch, onSetupAuth, onSetupStore, select } from '../store.js';
+import { dispatch, get, onSetupAuth, onSetupStore, select } from '../store.js';
 import { html } from './component.js';
 import './preview.js';
 
@@ -27,7 +27,18 @@ export class App extends HTMLElement {
   async onStart() {
     await onSetupAuth();
     await onSetupStore();
-    dispatch('reload');
+    await dispatch('reload');
+    const url = new URL(location.href);
+    const name = url.searchParams.get('fn');
+
+    if (!name) {
+      return;
+    }
+
+    const fn = get('functionList').find((f) => f.name === name);
+    if (fn) {
+      await dispatch('selectfunction', fn);
+    }
   }
 
   connectedCallback() {
