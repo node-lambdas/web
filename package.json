@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "prettier": "@cloud-cli/prettier-config",
-  "zmain": "./server/index.mjs",
   "scripts": {
     "ci": "npm i --no-fund --no-audit && npm run build",
     "build": "vite build --assetsInlineLimit=0",

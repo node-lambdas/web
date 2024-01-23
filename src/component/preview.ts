@@ -1,7 +1,7 @@
 import MarkdownIt from 'markdown-it';
 import { customElement } from './decorators';
 import { html } from './component';
-import { select, watch } from '../store';
+import { select, watch } from '../store/store.js';
 
 const t = html` <div class="p-4 prose" :innerHTML="contents"></div> `;
 

@@ -1,6 +1,6 @@
 import CodeMirror from '../vendor/codemirror.js';
 import { customElement } from './decorators.js';
-import { dispatch, select, watch } from '../store.js';
+import { dispatch, select, watch } from '../store/store.js';
 
 @customElement('js-editor')
 export class Editor extends HTMLElement {

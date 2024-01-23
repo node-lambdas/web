@@ -1,6 +1,6 @@
 import { getDownloadUrl } from 'https://bin.homebots.io/index.mjs';
 import { customElement } from './decorators.js';
-import { select } from '../store.js';
+import { select } from '../store/store.js';
 import { html } from './component.js';
 
 const t = html`

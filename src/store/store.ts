@@ -18,8 +18,8 @@ import {
   events as authEvents,
 } from 'https://auth.jsfn.run/index.mjs';
 
-import { FileEntry, FunctionEntry } from './types';
-import { useState } from './state.js';
+import { FileEntry, FunctionEntry } from '../types';
+import { useState } from '../state.js';
 
 const initialState = {
   fileList: [] as FileEntry[],
@@ -43,7 +43,7 @@ const actions = {
 
     await getResourceStore().getResource('fn').set(id, fn);
 
-    await dispatch('selectfunction', fn);
+    await dispatch('selectFunction', fn);
     await dispatch('addfile', 'index.mjs');
 
     const files = get('fileList');
@@ -81,10 +81,10 @@ const actions = {
 
     const { fileId } = await createFile(binId);
     await writeMetadata(binId, fileId, { name });
-    await dispatch('updatefilelist');
+    await dispatch('updateFileList');
   },
 
-  async updatefilelist() {
+  async updateFileList() {
     const list: FileEntry[] = [];
     const binId = get('binId');
 
@@ -103,7 +103,7 @@ const actions = {
     set('fileList', list);
   },
 
-  async updateauth() {
+  async updateProfileId() {
     try {
       const p = await getProfile();
       set('profileId', p.id);
@@ -148,16 +148,16 @@ const actions = {
     set('currentFile', file);
   },
 
-  async selectfunction(fn: FunctionEntry) {
+  async selectFunction(fn: FunctionEntry) {
     set('binId', fn.binId);
     set('currentFile', null);
     set('currentFunction', fn);
 
-    await dispatch('updatefilelist');
+    await dispatch('updateFileList');
   },
 
   async reload() {
-    await dispatch('updatefilelist');
+    await dispatch('updateFileList');
     await dispatch('updatefunctionlist');
   },
 };
@@ -171,14 +171,15 @@ export function getResourceStore() {
 }
 
 export async function onSetupAuth() {
-  const updateAuth = () => dispatch('updateauth');
-
-  authEvents.addEventListener('signin', updateAuth);
-  authEvents.addEventListener('signout', updateAuth);
+  authEvents.addEventListener('signout', () => dispatch('updateProfileId'));
+  authEvents.addEventListener('signin', async () => {
+    await dispatch('updateProfileId');
+    await dispatch('reload');
+  });
 
   try {
     await isAuthenticated();
-    updateAuth();
+    dispatch('updateProfileId');
   } catch {
     return new Promise((resolve) => {
       authEvents.addEventListener('signin', (e) => resolve(e.detail));

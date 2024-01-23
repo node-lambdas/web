@@ -1,5 +1,5 @@
 import { customElement } from './decorators.js';
-import { dispatch, get, onSetupAuth, onSetupStore, select } from '../store.js';
+import { dispatch, get, onSetupAuth, onSetupStore, select } from '../store/store.js';
 import { html } from './component.js';
 import './preview.js';
 
@@ -37,7 +37,7 @@ export class App extends HTMLElement {
 
     const fn = get('functionList').find((f) => f.name === name);
     if (fn) {
-      await dispatch('selectfunction', fn);
+      await dispatch('selectFunction', fn);
     }
   }
 

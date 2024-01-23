@@ -1,5 +1,5 @@
 import { parse, materialize, normalize } from '@homebots/parse-html';
-import { dispatch, react, watch } from '../store.js';
+import { dispatch, react, watch } from '../store/store.js';
 import { isRef } from '../state.js';
 
 const AsyncFn = Object.getPrototypeOf(async () => {}).constructor;

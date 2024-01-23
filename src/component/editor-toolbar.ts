@@ -1,4 +1,4 @@
-import { select } from '../store.js';
+import { select } from '../store/store.js';
 import { html } from './component.js';
 
 const t = html`<div class="flex items-center w-full border-b py-2 px-4 space-x-4 h-12">

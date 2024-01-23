@@ -1,5 +1,5 @@
 import { customElement } from './decorators.js';
-import { dispatch, select, watch } from '../store.js';
+import { dispatch, select, watch } from '../store/store.js';
 import { html } from './component.js';
 
 const t = html`
@@ -30,7 +30,7 @@ export class Selector extends HTMLElement {
 
       if (index > 0) {
         const v = options[index - 1];
-        dispatch('selectfunction', v);
+        dispatch('selectFunction', v);
       }
     };
 
