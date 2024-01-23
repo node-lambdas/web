@@ -1,5 +1,5 @@
 import { getDownloadUrl } from 'https://bin.homebots.io/index.mjs';
-import { customElement } from '../decorators.js';
+import { customElement } from './decorators.js';
 import { select } from '../store.js';
 import { html } from './component.js';
 
@@ -12,16 +12,20 @@ const t = html`
       <span class="font-bold" :innerText="fnName"></span>
       <span class="text-gray-700">.jsfn.run</span>
     </div>
-    <a :href="downloadUrl"><img src="/assets/download.svg" /></a>
+    <a title="Copy publish link" :hidden="!downloadUrl.value" :href="downloadUrl" @click="onLinkCopy(event)"><img src="/copy.svg" /></a>
   </header>
 `;
 
 @customElement('js-header')
 export class Header extends HTMLElement {
   fnName = select((s) => s.currentFunction.name || '');
-  downloadUrl = select((s) => (s.binId ? getDownloadUrl(s.binId) : '#'));
+  downloadUrl = select((s) => (s.binId ? getDownloadUrl(s.binId) : ''));
 
   connectedCallback() {
     this.append(t(this));
+  }
+
+  onLinkCopy(e) {
+    navigator.clipboard.writeText(this.downloadUrl.value);
   }
 }

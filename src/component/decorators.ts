@@ -1,4 +1,5 @@
 export const Init = Symbol('@@init');
+export const Destroy = Symbol('@@destroy');
 
 export class EventEmitter<T = any> {
   constructor(private t: HTMLElement, private e: string) {}
@@ -55,10 +56,12 @@ export function customElement(tag: string) {
   return (target: any, _t: any) => {
     class Component extends target {
       [Init]: Array<Function | [Function, any]>;
+      [Destroy]: Array<Function | [Function, any]>;
 
       constructor() {
         super();
         this[Init] = [];
+        this[Destroy] = [];
       }
 
       connectedCallback() {
@@ -68,6 +71,17 @@ export function customElement(tag: string) {
         }
 
         super.connectedCallback();
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+
+        if (this.isConnected) {
+          return;
+        }
+
+        this[Destroy].forEach((fn) => (typeof fn === 'function' ? fn(this) : fn[0](this, fn[1])));
+        this[Destroy].length = 0;
       }
     }
 

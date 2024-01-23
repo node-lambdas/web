@@ -1,18 +1,23 @@
-import { customElement } from '../decorators.js';
+import { customElement } from './decorators.js';
 import { dispatch, select, watch } from '../store.js';
 import { html } from './component.js';
 
 const t = html`
   <div class="flex items-center p-2">
-    <select class="bg-transparent font-small w-full p-3"></select>
-    <span class="w-0 h-4 mx-2 block border-l border-gray-400"></span>
     <button class="w-6 h-6" ^click="create"><span class="material-icons">add</span></button>
+    <select class="bg-transparent font-small w-full p-3" :hidden="noFunctions"></select>
+    <button class="w-6 h-6" ^click="editname" :hidden="noFunctionSelected">
+      <span class="material-icons">edit</span>
+    </button>
+    <span class="w-0 h-4 mx-2 border-l border-gray-400" :hidden="noFunctions"></span>
   </div>
 `;
 
 @customElement('js-selector')
 export class Selector extends HTMLElement {
   options = select((s) => s.functionList);
+  noFunctions = select((s) => !s.functionList?.length);
+  noFunctionSelected = select((s) => !s.currentFunction.id);
 
   connectedCallback() {
     this.append(t(this));

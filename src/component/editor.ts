@@ -1,5 +1,5 @@
-import CodeMirror from '../../assets/codemirror.js';
-import { customElement } from '../decorators.js';
+import CodeMirror from '../vendor/codemirror.js';
+import { customElement } from './decorators.js';
 import { dispatch, select, watch } from '../store.js';
 
 @customElement('js-editor')

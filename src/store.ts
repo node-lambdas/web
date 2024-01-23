@@ -46,6 +46,17 @@ const actions = {
     dispatch('selectfunction', fn);
   },
 
+  async editname() {
+    const fn = get('currentFunction');
+    const name = prompt(fn.name, 'Name') || '';
+
+    if (!name) return;
+
+    const newValue = { ...fn, name };
+    await getResourceStore().getResource('fn').set(fn.id, newValue);
+    set('currentFunction', newValue);
+  },
+
   async addfile(name: string) {
     if (!name) {
       name = prompt('File name', 'Add file') || '';

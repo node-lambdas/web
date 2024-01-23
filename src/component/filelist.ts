@@ -1,4 +1,4 @@
-import { customElement } from '../decorators.js';
+import { customElement } from './decorators.js';
 import { dispatch, select, watch } from '../store.js';
 import { html } from './component.js';
 
