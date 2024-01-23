@@ -43,7 +43,11 @@ const actions = {
 
     await getResourceStore().getResource('fn').set(id, fn);
 
-    dispatch('selectfunction', fn);
+    await dispatch('selectfunction', fn);
+    await dispatch('addfile', 'index.mjs');
+
+    const files = get('fileList');
+    dispatch('selectfile', files[0] || null);
   },
 
   async editname() {
@@ -59,19 +63,22 @@ const actions = {
   },
 
   async addfile(name: string) {
+    const binId = get('binId');
+    if (!binId) {
+      return;
+    }
+
     if (!name) {
       name = prompt('Name for the new file', '') || '';
     }
 
-    if (!name) return;
-
-    const binId = get('binId');
-    if (!binId) return;
+    if (!name) {
+      return;
+    }
 
     const { fileId } = await createFile(binId);
     await writeMetadata(binId, fileId, { name });
-
-    dispatch('updatefilelist');
+    await dispatch('updatefilelist');
   },
 
   async updatefilelist() {
@@ -140,20 +147,20 @@ const actions = {
 
   selectfunction(fn: FunctionEntry) {
     set('binId', fn.binId);
-    dispatch('updatefilelist');
     set('currentFile', null);
     set('currentFunction', fn);
+    dispatch('updatefilelist');
   },
 
-  reload() {
-    dispatch('updatefilelist');
-    dispatch('updatefunctionlist');
+  async reload() {
+    await dispatch('updatefilelist');
+    await dispatch('updatefunctionlist');
   },
 };
 
-const { set, get, react, watch, listen, select, dispatch } = useState(initialState, actions);
+const { set, get, react, watch, select, dispatch } = useState(initialState, actions);
 
-export { set, get, react, watch, listen, select, dispatch };
+export { set, get, react, watch, select, dispatch };
 
 export function getResourceStore() {
   return Store.get(get('storeId'));

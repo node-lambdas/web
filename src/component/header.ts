@@ -13,9 +13,15 @@ const t = html`
       <span class="text-gray-700">.jsfn.run</span>
     </div>
 
-    <a title="Copy publish link" :hidden="!downloadUrl.value" :href="downloadUrl" @click="onLinkCopy($event)"
-      ><img src="/copy.svg"
-    /></a>
+    <a
+      class="w-4 h-4"
+      title="Copy download link"
+      :hidden="!downloadUrl.value"
+      :href="downloadUrl"
+      @click="onLinkCopy($event)"
+    >
+      <img src="/copy.svg" />
+    </a>
   </header>
 `;
 
