@@ -34,7 +34,7 @@ const initialState = {
 const actions = {
   async create() {
     const id = crypto.randomUUID();
-    const name = prompt('Function name');
+    const name = prompt('New function name');
 
     if (!name) return;
 
@@ -48,18 +48,19 @@ const actions = {
 
   async editname() {
     const fn = get('currentFunction');
-    const name = prompt(fn.name, 'Name') || '';
+    const name = prompt('Name', fn.name) || '';
 
     if (!name) return;
 
     const newValue = { ...fn, name };
     await getResourceStore().getResource('fn').set(fn.id, newValue);
     set('currentFunction', newValue);
+    dispatch('updatefunctionlist');
   },
 
   async addfile(name: string) {
     if (!name) {
-      name = prompt('File name', 'Add file') || '';
+      name = prompt('Name for the new file', '') || '';
     }
 
     if (!name) return;

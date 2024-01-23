@@ -12,7 +12,10 @@ const t = html`
       <span class="font-bold" :innerText="fnName"></span>
       <span class="text-gray-700">.jsfn.run</span>
     </div>
-    <a title="Copy publish link" :hidden="!downloadUrl.value" :href="downloadUrl" @click="onLinkCopy(event)"><img src="/copy.svg" /></a>
+
+    <a title="Copy publish link" :hidden="!downloadUrl.value" :href="downloadUrl" @click="onLinkCopy($event)"
+      ><img src="/copy.svg"
+    /></a>
   </header>
 `;
 
@@ -26,6 +29,7 @@ export class Header extends HTMLElement {
   }
 
   onLinkCopy(e) {
+    e.preventDefault();
     navigator.clipboard.writeText(this.downloadUrl.value);
   }
 }
