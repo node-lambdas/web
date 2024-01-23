@@ -47,7 +47,7 @@ const actions = {
     await dispatch('addfile', 'index.mjs');
 
     const files = get('fileList');
-    dispatch('selectfile', files[0] || null);
+    await dispatch('selectfile', files[0] || null);
   },
 
   async editname() {
@@ -59,7 +59,7 @@ const actions = {
     const newValue = { ...fn, name };
     await getResourceStore().getResource('fn').set(fn.id, newValue);
     set('currentFunction', newValue);
-    dispatch('updatefunctionlist');
+    await dispatch('updatefunctionlist');
   },
 
   async addfile(name: string) {

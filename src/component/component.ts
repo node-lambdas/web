@@ -13,8 +13,8 @@ export const bind = (scope, el, { name, value }) => {
   if (name.startsWith('^')) {
     const event = name.slice(1);
     let fn;
-    if (event.includes(':')) {
-      const [left, right] = event.split(':');
+    if (value.includes(':')) {
+      const [left, right] = value.trim().split(':');
       const _fn = Function('scope', 'dispatch', `with (scope) { dispatch("${left}", ${right}) }`);
       fn = () => _fn(scope, dispatch);
     } else {
