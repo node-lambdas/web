@@ -55,28 +55,15 @@ export function useState<T extends object, A extends string>(initialState: T, ac
     return state[key];
   }
 
-  function watch<V extends any>(input: Ref<V> | ((state: T) => V), observer: (v: V, p: V | undefined) => void) {
+  function watch<V extends any>(input: Ref<V>, observer: (v: V, p: V | undefined) => void) {
     let lastValue: V;
-
-    if (isRef(input)) {
-      lastValue = input.value!;
-      observer(lastValue, undefined);
-      input.observe((value) => {
-        if (value !== lastValue) {
-          observer(value, lastValue);
-          lastValue = value;
-        }
-      });
-      return;
-    }
-
-    lastValue = input(state);
+    lastValue = input.value!;
     observer(lastValue, undefined);
-    return react(() => {
-      const v = input(state);
-      if (v !== lastValue) {
-        observer(v!, lastValue);
-        lastValue = v;
+
+    input.observe((value) => {
+      if (value !== lastValue) {
+        observer(value, lastValue);
+        lastValue = value;
       }
     });
   }

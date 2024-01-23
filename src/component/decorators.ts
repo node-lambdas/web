@@ -1,3 +1,5 @@
+import { isRef } from '../state';
+
 export const Init = Symbol('@@init');
 export const Destroy = Symbol('@@destroy');
 
@@ -82,6 +84,8 @@ export function customElement(tag: string) {
 
         this[Destroy].forEach((fn) => (typeof fn === 'function' ? fn(this) : fn[0](this, fn[1])));
         this[Destroy].length = 0;
+
+        Object.values(this).forEach((v) => isRef(v) && v.detach());
       }
     }
 
