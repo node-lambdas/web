@@ -1,5 +1,5 @@
 import { customElement } from './decorators.js';
-import { select } from '../store/store.js';
+import { dispatch, select } from '../store/store.js';
 import { html } from './component.js';
 import './preview.js';
 
@@ -23,4 +23,8 @@ export class App extends HTMLElement {
   noFileOpen = select((s) => !s.currentFile?.meta?.id);
   noFunctionSelected = select((s) => !s.currentFunction?.id);
   noPreview = select((s) => !!s.currentFile || !s.fileList.find((f) => f.meta?.name === 'readme.md'));
+
+  connectedCallback() {
+    dispatch('startup');
+  }
 }

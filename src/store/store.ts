@@ -191,8 +191,8 @@ const actions = {
     await fetch('https://cloud.jsfn.run', { method: 'POST', body, headers });
   },
   async startup() {
-    await onSetupAuth();
-    await onSetupStore();
+    await setupAuth();
+    await setupStore();
     await dispatch('reload');
 
     const name = new URL(location.href).searchParams.get('fn');
@@ -210,13 +210,11 @@ const actions = {
 
 const { set, get, react, watch, select, dispatch } = useState(initialState, actions);
 
-export { set, get, react, watch, select, dispatch };
-
 function getResourceStore() {
   return Store.get(get('storeId'));
 }
 
-export async function onSetupAuth() {
+export async function setupAuth() {
   authEvents.addEventListener('signout', () => dispatch('updateProfileId'));
   authEvents.addEventListener('signin', async () => {
     await dispatch('updateProfileId');
@@ -233,7 +231,7 @@ export async function onSetupAuth() {
   }
 }
 
-export async function onSetupStore() {
+export async function setupStore() {
   let storeId = await getProperty('jsfn:storeId');
 
   if (!storeId) {
@@ -243,3 +241,5 @@ export async function onSetupStore() {
 
   set('storeId', storeId);
 }
+
+export { set, get, react, watch, select, dispatch };
