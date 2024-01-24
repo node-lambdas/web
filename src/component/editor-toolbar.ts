@@ -16,5 +16,3 @@ const t = html`<div class="flex items-center w-full border-b py-2 px-4 space-x-4
 export class EditorToolbar extends HTMLElement {
   fileName = select((s) => s.currentFile?.meta?.name || '');
 }
-
-customElements.define('js-editortoolbar', EditorToolbar);
