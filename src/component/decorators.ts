@@ -23,10 +23,12 @@ export function emitter(name?: string) {
 }
 
 export function child(selector: string) {
-  return function (_target: any, _property: string, descriptor: PropertyDescriptor) {
-    descriptor.get = function () {
-      return this.querySelector(selector);
-    };
+  return function (target: any, property: string) {
+    Object.defineProperty(target, property, {
+      get() {
+        return this.querySelector(selector);
+      },
+    });
   };
 }
 
