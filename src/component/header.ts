@@ -14,10 +14,10 @@ const t = html`
       <span class="text-gray-700">.jsfn.run</span>
     </div>
 
-    <a title="Copy download link" :hidden="!downloadUrl.value" :href="downloadUrl" @click="onLinkCopy($event)">
+    <a title="Copy download link" :hidden="!downloadUrl" :href="downloadUrl" @click="onLinkCopy($event)">
       <span class="material-icons text-base">content_copy</span>
     </a>
-    <button ^click="deploy" :hidden="!fnName.value" title="Deploy">
+    <button ^click="deploy" :hidden="!fnName" title="Deploy">
       <span class="material-icons text-base">arrow_circle_up</span>
       <span class="sr-only">Deploy</span>
     </button>
