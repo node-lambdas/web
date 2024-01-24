@@ -13,11 +13,7 @@ const t = html`<div class="flex h-12 items-center px-3 border-b space-x-2">
   </button>
 </div>`;
 
-@customElement('js-topbar')
+@customElement('js-topbar', t)
 export class Topbar extends HTMLElement {
   private fn: any;
-
-  connectedCallback() {
-    this.append(t(this));
-  }
 }

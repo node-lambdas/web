@@ -26,6 +26,10 @@ class Ref<RefValue> {
   }
 }
 
+export function ref<T>(value?: T) {
+  return new Ref<T>(value);
+}
+
 export function isRef(v): v is Ref<any> {
   return v && v instanceof Ref;
 }

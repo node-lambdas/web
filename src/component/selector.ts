@@ -4,7 +4,7 @@ import { html } from './component.js';
 
 const t = html`
   <div class="flex items-center p-2">
-    <button class="w-6 h-6" ^click="create"><span class="material-icons">add</span></button>
+    <button class="w-6 h-6" ^click="create" :hidden="notLoggedIn"><span class="material-icons">add</span></button>
     <select class="bg-transparent font-small w-full p-3" :hidden="noFunctions"></select>
     <button class="w-6 h-6" ^click="editname" :hidden="noFunctionSelected">
       <span class="material-icons">edit</span>
@@ -13,15 +13,15 @@ const t = html`
   </div>
 `;
 
-@customElement('js-selector')
+@customElement('js-selector', t)
 export class Selector extends HTMLElement {
   options = select((s) => s.functionList);
   noFunctions = select((s) => !s.functionList?.length);
   noFunctionSelected = select((s) => !s.currentFunction?.id);
   selected = select((s) => s.currentFunction?.id || '');
+  notLoggedIn = select(s => !s.profileId);
 
   connectedCallback() {
-    this.append(t(this));
     const selector = this.querySelector('select') as HTMLSelectElement;
 
     selector.onchange = () => {

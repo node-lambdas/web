@@ -19,21 +19,21 @@ const line = html`<a
   <span class="file-link truncate text-sm font-medium" :innerText="file?.meta?.name || file?.meta?.id"></span>
 </a>`;
 
-@customElement('js-filelist')
+@customElement('js-filelist', t)
 export class FileList extends HTMLElement {
   fileList = select((s) => s.fileList);
 
   connectedCallback() {
-    this.append(t(this));
     const nav = this.querySelector('nav') as HTMLElement;
+    let detach;
 
     watch(this.fileList, (list) => {
       nav.innerHTML = '';
-
+      detach?.();
       for (const file of list) {
         const f = line({ file, dispatch });
-
-        nav.append(f);
+        detach = f[1];
+        nav.append(f[0]);
       }
     });
   }

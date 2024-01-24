@@ -7,6 +7,7 @@ import {
   writeFile,
   createFile,
   createBin,
+  getDownloadUrl,
 } from 'https://bin.homebots.io/index.mjs';
 import {
   getProfile,
@@ -18,8 +19,18 @@ import {
   events as authEvents,
 } from 'https://auth.jsfn.run/index.mjs';
 
-import { FileEntry, FunctionEntry } from '../types';
-import { useState } from '../state.js';
+import { useState } from '../vendor/state.js';
+
+export type FileEntry = {
+  contents: string;
+  meta?: Record<string, string>;
+};
+
+export type FunctionEntry = {
+  id: string;
+  binId: string;
+  name: string;
+};
 
 const initialState = {
   fileList: [] as FileEntry[],
@@ -160,13 +171,31 @@ const actions = {
     await dispatch('updateFileList');
     await dispatch('updatefunctionlist');
   },
+
+  async deploy() {
+    const binId = get('binId');
+    const fn = get('currentFunction');
+
+    if (!(binId && fn)) {
+      return;
+    }
+
+    const name = fn.name;
+    const source = getDownloadUrl(binId);
+    const body = JSON.stringify({ source, name });
+    const headers = {
+      'content-type': 'application/json',
+    };
+
+    await fetch('https://cloud.jsfn.run', { method: 'POST', body, headers });
+  },
 };
 
 const { set, get, react, watch, select, dispatch } = useState(initialState, actions);
 
 export { set, get, react, watch, select, dispatch };
 
-export function getResourceStore() {
+function getResourceStore() {
   return Store.get(get('storeId'));
 }
 

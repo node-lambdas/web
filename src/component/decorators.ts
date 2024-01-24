@@ -1,4 +1,5 @@
-import { isRef } from '../state';
+import { isRef, ref } from '../vendor/state.js';
+import { HtmlBindings } from './component.js';
 
 export const Init = Symbol('@@init');
 export const Destroy = Symbol('@@destroy');
@@ -54,41 +55,36 @@ export function child(selector: string) {
   };
 }
 
-export function customElement(tag: string) {
-  return (target: any, _t: any) => {
-    class Component extends target {
-      [Init]: Array<Function | [Function, any]>;
-      [Destroy]: Array<Function | [Function, any]>;
+export function customElement(tag: string, template?: (scope) => HtmlBindings) {
+  return (Target: any, _t: any) => {
+    const connect = Target.prototype.connectedCallback;
+    const disconnect = Target.prototype.disconnectedCallback;
 
-      constructor() {
-        super();
-        this[Init] = [];
-        this[Destroy] = [];
-      }
-
-      connectedCallback() {
-        if (this.isConnected) {
-          this[Init].forEach((fn) => (typeof fn === 'function' ? fn(this) : fn[0](this, fn[1])));
-          this[Init].length = 0;
+    Target.prototype.connectedCallback = function () {
+      if (this.isConnected) {
+        if (template) {
+          const [el, detach] = template(this);
+          this.append(el);
+          this._bindings = ref();
+          this._bindings.detach = detach;
         }
 
-        super.connectedCallback();
+        // Target[Init].forEach((fn) => (typeof fn === 'function' ? fn(this) : fn[0](this, fn[1])));
       }
 
-      disconnectedCallback() {
-        super.disconnectedCallback();
+      connect && connect.call(this);
+    };
 
-        if (this.isConnected) {
-          return;
-        }
-
-        this[Destroy].forEach((fn) => (typeof fn === 'function' ? fn(this) : fn[0](this, fn[1])));
-        this[Destroy].length = 0;
-
-        Object.values(this).forEach((v) => isRef(v) && v.detach());
+    Target.prototype.disconnectedCallback = function () {
+      if (this.isConnected) {
+        return;
       }
-    }
 
-    customElements.define(tag, Component as any);
+      disconnect && disconnect.call(this);
+
+      Object.values(this).forEach((v) => isRef(v) && v.detach());
+    };
+
+    Promise.resolve().then(() => customElements.define(tag, Target));
   };
 }

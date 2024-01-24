@@ -18,7 +18,7 @@ const t = html`<div class="flex h-screen w-screen">
   </main>
 </div>`;
 
-@customElement('js-app')
+@customElement('js-app', t)
 export class App extends HTMLElement {
   noFileOpen = select((s) => !s.currentFile?.meta?.id);
   noFunctionSelected = select((s) => !s.currentFunction?.id);
@@ -42,9 +42,6 @@ export class App extends HTMLElement {
   }
 
   connectedCallback() {
-    this.append(t(this));
     this.onStart();
   }
-
-  disconnectedCallback() {}
 }
