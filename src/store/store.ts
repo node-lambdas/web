@@ -123,10 +123,11 @@ const actions = {
     }
   },
 
-  save() {
+  async save() {
     const currentFile = get('currentFile');
+
     if (currentFile?.meta?.id) {
-      writeFile(get('binId'), currentFile.meta.id, currentFile.contents);
+      await writeFile(get('binId'), currentFile.meta.id, currentFile.contents);
     }
   },
 
@@ -189,6 +190,22 @@ const actions = {
 
     await fetch('https://cloud.jsfn.run', { method: 'POST', body, headers });
   },
+  async startup() {
+    await onSetupAuth();
+    await onSetupStore();
+    await dispatch('reload');
+
+    const name = new URL(location.href).searchParams.get('fn');
+
+    if (!name) {
+      return;
+    }
+
+    const fn = get('functionList').find((f) => f.name === name);
+    if (fn) {
+      await dispatch('selectFunction', fn);
+    }
+  }
 };
 
 const { set, get, react, watch, select, dispatch } = useState(initialState, actions);

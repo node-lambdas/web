@@ -1,4 +1,4 @@
-import { customElement } from './decorators.js';
+import { child, customElement } from './decorators.js';
 import { dispatch, select, watch } from '../store/store.js';
 import { html } from './component.js';
 
@@ -19,11 +19,13 @@ export class Selector extends HTMLElement {
   noFunctions = select((s) => !s.functionList?.length);
   noFunctionSelected = select((s) => !s.currentFunction?.id);
   selected = select((s) => s.currentFunction?.id || '');
-  notLoggedIn = select(s => !s.profileId);
+  notLoggedIn = select((s) => !s.profileId);
+
+  @child('select') selector: HTMLSelectElement;
 
   connectedCallback() {
-    const selector = this.querySelector('select') as HTMLSelectElement;
-
+    const selector = this.selector;
+    
     selector.onchange = () => {
       const index = selector.selectedIndex;
       const options = this.options.value || [];
@@ -38,20 +40,19 @@ export class Selector extends HTMLElement {
   }
 
   updateOptions() {
-    const s = this.querySelector('select') as HTMLSelectElement;
     const mappedOptions = this.options.value!.map((f) => ({ label: f.name, value: f }));
     const options = [
       { label: `${this.getAttribute('placeholder') || 'Select an option'}`, value: { id: '' } },
       ...mappedOptions,
     ];
 
-    s.innerHTML = '';
+    this.selector.innerHTML = '';
 
     options.map((option) => {
       const o = document.createElement('option');
       o.innerText = option.label;
       o.selected = this.selected.value === option.value.id;
-      s.append(o);
+      this.selector.append(o);
     });
   }
 }

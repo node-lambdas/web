@@ -1,5 +1,5 @@
 import { customElement } from './decorators.js';
-import { dispatch, get, onSetupAuth, onSetupStore, select } from '../store/store.js';
+import { select } from '../store/store.js';
 import { html } from './component.js';
 import './preview.js';
 
@@ -23,25 +23,4 @@ export class App extends HTMLElement {
   noFileOpen = select((s) => !s.currentFile?.meta?.id);
   noFunctionSelected = select((s) => !s.currentFunction?.id);
   noPreview = select((s) => !!s.currentFile || !s.fileList.find((f) => f.meta?.name === 'readme.md'));
-
-  async onStart() {
-    await onSetupAuth();
-    await onSetupStore();
-    await dispatch('reload');
-    const url = new URL(location.href);
-    const name = url.searchParams.get('fn');
-
-    if (!name) {
-      return;
-    }
-
-    const fn = get('functionList').find((f) => f.name === name);
-    if (fn) {
-      await dispatch('selectFunction', fn);
-    }
-  }
-
-  connectedCallback() {
-    this.onStart();
-  }
 }
