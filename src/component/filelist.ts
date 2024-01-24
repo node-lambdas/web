@@ -25,15 +25,20 @@ export class FileList extends HTMLElement {
 
   connectedCallback() {
     const nav = this.querySelector('nav') as HTMLElement;
-    let detach;
+    let detach: any[] = [];
 
     watch(this.fileList, (list) => {
       nav.innerHTML = '';
-      detach?.();
+
+      if (detach.length) {
+        detach.forEach((f) => f());
+        detach.length = 0;
+      }
+
       for (const file of list) {
-        const f = line({ file, dispatch });
-        detach = f[1];
-        nav.append(f[0]);
+        const [el, fn] = line({ file, dispatch });
+        nav.append(el);
+        detach.push(fn);
       }
     });
   }

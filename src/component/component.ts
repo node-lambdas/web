@@ -3,14 +3,13 @@ import { dispatch, react, watch } from '../store/store.js';
 import { isRef } from '../vendor/state.js';
 
 const AsyncFn = Object.getPrototypeOf(async () => {}).constructor;
-const noop = Symbol();
 type DetachFn = () => void;
 
 export const bind = (scope: any, el: HTMLElement, { name, value }) => {
   if (name.startsWith('@')) {
     const fn = Function('scope', '$event', `with (scope) { return (${value}) }`);
     el.addEventListener(name.slice(1), (e) => fn(scope, e));
-    return noop;
+    return;
   }
 
   if (name.startsWith('^')) {
@@ -26,7 +25,7 @@ export const bind = (scope: any, el: HTMLElement, { name, value }) => {
       el.addEventListener(event, () => dispatch(action));
     }
 
-    return noop;
+    return;
   }
 
   if (name.startsWith(':')) {
@@ -37,7 +36,7 @@ export const bind = (scope: any, el: HTMLElement, { name, value }) => {
     if (isRef(initial)) {
       el[property] = initial.value;
       watch(initial, (v) => (el[property] = v));
-      return noop;
+      return;
     }
 
     const apply = (value) => value.catch(() => '[error]').then((v) => (el[property] = v));
@@ -53,6 +52,7 @@ export const bind = (scope: any, el: HTMLElement, { name, value }) => {
         return value;
       },
     });
+
     apply(fnAsync(scopeProxy));
     return react(() => apply(fnAsync(scopeProxy)));
   }
@@ -72,7 +72,9 @@ export const html = (text: string | TemplateStringsArray): TemplateFn => {
         if (node.type === 'element') {
           node.attributes.forEach((attr) => {
             const next = bind(scope, el as HTMLElement, attr);
-            next === noop || all.push(next);
+            if (next) {
+              all.push(next);
+            }
           });
         }
       }),
