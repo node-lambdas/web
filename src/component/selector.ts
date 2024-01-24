@@ -21,11 +21,9 @@ export class Selector extends HTMLElement {
   selected = select((s) => s.currentFunction?.id || '');
   notLoggedIn = select((s) => !s.profileId);
 
-  @child('select') selector: HTMLSelectElement;
-
   connectedCallback() {
-    const selector = this.selector;
-    
+    const selector = this.querySelector('select')!;
+
     selector.onchange = () => {
       const index = selector.selectedIndex;
       const options = this.options.value || [];
@@ -40,19 +38,20 @@ export class Selector extends HTMLElement {
   }
 
   updateOptions() {
+    const selector = this.querySelector('select')!;
     const mappedOptions = this.options.value!.map((f) => ({ label: f.name, value: f }));
     const options = [
       { label: `${this.getAttribute('placeholder') || 'Select an option'}`, value: { id: '' } },
       ...mappedOptions,
     ];
 
-    this.selector.innerHTML = '';
+    selector.innerHTML = '';
 
     options.map((option) => {
       const o = document.createElement('option');
       o.innerText = option.label;
       o.selected = this.selected.value === option.value.id;
-      this.selector.append(o);
+      selector.append(o);
     });
   }
 }

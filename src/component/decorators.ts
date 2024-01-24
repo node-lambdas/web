@@ -1,38 +1,10 @@
 import { isRef, ref } from '../vendor/state.js';
-import { HtmlBindings } from './component.js';
+import { TemplateFn } from './component.js';
 
 export const Init = Symbol('@@init');
 export const Destroy = Symbol('@@destroy');
 
-function createEmitter(t: HTMLElement, e: string) {
-  return {
-    emit(detail: any) {
-      t.dispatchEvent(new CustomEvent(e, { detail }));
-    },
-  };
-}
-
-export function emitter(name?: string) {
-  return function (target, property) {
-    Object.defineProperty(target.prototype, property, {
-      get() {
-        return createEmitter(this, name || property);
-      },
-    });
-  };
-}
-
-export function child(selector: string) {
-  return function (target: any, property: string) {
-    Object.defineProperty(target, property, {
-      get() {
-        return this.querySelector(selector);
-      },
-    });
-  };
-}
-
-export function customElement(tag: string, template?: (scope) => HtmlBindings) {
+export function customElement(tag: string, template?: TemplateFn) {
   return (Target: any, _t: any) => {
     const connect = Target.prototype.connectedCallback;
     const disconnect = Target.prototype.disconnectedCallback;

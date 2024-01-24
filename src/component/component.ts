@@ -59,8 +59,9 @@ export const bind = (scope: any, el: HTMLElement, { name, value }) => {
 };
 
 export type HtmlBindings = [DocumentFragment, DetachFn];
+export type TemplateFn = (scope: any) => HtmlBindings;
 
-export const html = (text: string | TemplateStringsArray) => {
+export const html = (text: string | TemplateStringsArray): TemplateFn => {
   const tree = normalize(parse(text[0] || String(text)));
 
   return (scope: any): HtmlBindings => {
