@@ -13,7 +13,7 @@ function createEmitter(t: HTMLElement, e: string) {
 }
 
 export function emitter(name?: string) {
-  return (target, property) => {
+  return function (target, property) {
     Object.defineProperty(target.prototype, property, {
       get() {
         return createEmitter(this, name || property);
@@ -23,12 +23,10 @@ export function emitter(name?: string) {
 }
 
 export function child(selector: string) {
-  return (target, property) => {
-    Object.defineProperty(target.prototype, property, {
-      get() {
-        return this.querySelector(selector);
-      },
-    });
+  return function (_target: any, _property: string, descriptor: PropertyDescriptor) {
+    descriptor.get = function () {
+      return this.querySelector(selector);
+    };
   };
 }
 
