@@ -1,15 +1,14 @@
-import { child, customElement } from './decorators.js';
+import { customElement } from './decorators.js';
 import { dispatch, select, watch } from '../store/store.js';
 import { html } from './component.js';
 
 const t = html`
   <div class="flex items-center p-2">
     <button class="w-6 h-6" ^click="create" :hidden="notLoggedIn"><span class="material-icons">add</span></button>
-    <select class="bg-transparent font-small w-full p-3" :hidden="noFunctions"></select>
+    <select class="bg-transparent font-small w-72 p-3" :hidden="noFunctions"></select>
     <button class="w-6 h-6" ^click="editname" :hidden="noFunctionSelected">
       <span class="material-icons">edit</span>
     </button>
-    <span class="w-0 h-4 mx-2 border-l border-gray-400" :hidden="noFunctions"></span>
   </div>
 `;
 

@@ -39,6 +39,13 @@ export function useState<T extends object, A extends string>(initialState: T, ac
   const events = new EventTarget();
   const onStateChange = (detail: any) => events.dispatchEvent(new CustomEvent(stateChangeEvent, { detail }));
 
+  let devTools;
+
+  if ((window as any).__REDUX_DEVTOOLS_EXTENSION__) {
+    devTools = (window as any).__REDUX_DEVTOOLS_EXTENSION__.connect();
+    devTools.init(initialState);
+  }
+
   const state = new Proxy(initialState, {
     get(target, p) {
       return target[p];
@@ -81,6 +88,7 @@ export function useState<T extends object, A extends string>(initialState: T, ac
   async function dispatch(action: A, payload: any = null) {
     await actions[action](payload);
     onStateChange(state);
+    devTools?.send(action, state);
   }
 
   function select<V>(selector: (state: T) => V): Ref<V> {
