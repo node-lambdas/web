@@ -23,7 +23,7 @@ import { useState } from '../vendor/state.js';
 
 export type FileEntry = {
   contents: string;
-  meta?: Record<string, string>;
+  meta: Record<string, string>;
 };
 
 export type FunctionEntry = {
@@ -44,21 +44,21 @@ const initialState = {
 
 const actions = {
   async create() {
-    const id = crypto.randomUUID();
     const name = prompt('New function name');
 
     if (!name) return;
 
+    const id = crypto.randomUUID();
     const { binId } = await createBin();
     const fn = { id, binId, name };
 
     await getResourceStore().getResource('fn').set(id, fn);
 
     await dispatch('selectFunction', fn);
-    await dispatch('addfile', 'index.mjs');
+    await dispatch('addFile', 'index.mjs');
 
     const files = get('fileList');
-    await dispatch('selectfile', files[0] || null);
+    await dispatch('selectFile', files[0] || null);
   },
 
   async editname() {
@@ -73,10 +73,10 @@ const actions = {
     const newValue = { ...fn, name };
     await getResourceStore().getResource('fn').set(fn.id, newValue);
     set('currentFunction', newValue);
-    await dispatch('updatefunctionlist');
+    await dispatch('updateFunctionList');
   },
 
-  async addfile(name: string) {
+  async addFile(name: string) {
     const binId = get('binId');
     if (!binId) {
       return;
@@ -112,6 +112,7 @@ const actions = {
     }
 
     set('fileList', list);
+    commit();
   },
 
   async updateProfileId() {
@@ -121,6 +122,7 @@ const actions = {
     } catch {
       set('profileId', '');
     }
+    commit();
   },
 
   async save() {
@@ -131,16 +133,18 @@ const actions = {
     }
   },
 
-  updatecontent(value) {
+  updateContent(value) {
     const currentFile = get('currentFile');
     set('currentFile', {
-      meta: currentFile?.meta,
+      meta: currentFile!.meta,
       contents: value,
     });
+    commit();
   },
 
-  async updatefunctionlist() {
+  async updateFunctionList() {
     set('functionList', await getResourceStore().getResource('fn').list());
+    commit();
   },
 
   async signin() {
@@ -156,8 +160,9 @@ const actions = {
     await signOut();
   },
 
-  selectfile(file) {
+  selectFile(file) {
     set('currentFile', file);
+    commit();
   },
 
   async selectFunction(fn: FunctionEntry) {
@@ -166,11 +171,13 @@ const actions = {
     set('currentFunction', fn);
 
     await dispatch('updateFileList');
+    const indexFile = get('fileList').find(f => f.meta?.name === 'index.mjs');
+    await dispatch('selectFile', indexFile);
   },
 
   async reload() {
     await dispatch('updateFileList');
-    await dispatch('updatefunctionlist');
+    await dispatch('updateFunctionList');
   },
 
   async deploy() {
@@ -208,7 +215,7 @@ const actions = {
   }
 };
 
-const { set, get, react, watch, select, dispatch } = useState(initialState, actions);
+const { set, get, react, watch, select, dispatch, commit } = useState(initialState, actions);
 
 function getResourceStore() {
   return Store.get(get('storeId'));
@@ -240,6 +247,7 @@ export async function setupStore() {
   }
 
   set('storeId', storeId);
+  commit();
 }
 
-export { set, get, react, watch, select, dispatch };
+export { get, react, watch, select, dispatch };

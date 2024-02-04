@@ -87,8 +87,13 @@ export function useState<T extends object, A extends string>(initialState: T, ac
 
   async function dispatch(action: A, payload: any = null) {
     await actions[action](payload);
-    onStateChange(state);
     devTools?.send(action, state);
+    onStateChange(state);
+  }
+
+  async function commit() {
+    devTools?.send('@@commit', state);
+    onStateChange(state);
   }
 
   function select<V>(selector: (state: T) => V): Ref<V> {
@@ -97,5 +102,5 @@ export function useState<T extends object, A extends string>(initialState: T, ac
     return ref;
   }
 
-  return { react, select, dispatch, set, get, watch };
+  return { react, select, dispatch, set, get, watch, commit };
 }

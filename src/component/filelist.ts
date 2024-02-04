@@ -5,14 +5,14 @@ import { html } from './component.js';
 const t = html`
   <div class="flex items-center justify-between py-2 px-4 h-12 border-b border-gray-100">
     <h2 class="text-sm font-medium">Files</h2>
-    <button class="w-6 h-6" ^click="addfile"><span class="material-icons">add</span></button>
+    <button class="w-6 h-6" ^click="addFile"><span class="material-icons">add</span></button>
   </div>
   <nav class="space-y-1 py-1"></nav>
 `;
 
 const line = html`<a
   href="#"
-  ^click="selectfile:file"
+  ^click="selectFile:file"
   class="flex items-center space-x-1 hover:bg-gray-100 dark:hover:bg-gray-800 px-4 py-1"
 >
   <span class="icon icon-file"></span>
