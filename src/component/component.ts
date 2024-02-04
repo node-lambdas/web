@@ -1,8 +1,7 @@
 import { parse, materialize, normalize } from '@homebots/parse-html';
-import { dispatch, react, watch } from '../store/store.js';
+import { dispatch, select, watch } from '../store/store.js';
 import { isRef } from '../vendor/state.js';
 
-const AsyncFn = Object.getPrototypeOf(async () => {}).constructor;
 type DetachFn = () => void;
 
 function createScopeProxy(scope) {
@@ -20,8 +19,9 @@ function createScopeProxy(scope) {
 }
 
 function addEventListener(scope: any, el: HTMLElement, name: string, value: string) {
-  const fn = Function('scope', '$event', `with (scope) { return (${value}) }`);
-  el.addEventListener(name.slice(1), (e) => fn(scope, e));
+  const event = name.slice(1);
+  const fn = Function('scope', '$event', `with (scope) { console.log('${event}'); return (${value}) }`);
+  el.addEventListener(event, (e) => fn(scope, e));
 }
 
 function attachDispatcher(scope: any, el: HTMLElement, name: string, value: string) {
@@ -38,25 +38,64 @@ function attachDispatcher(scope: any, el: HTMLElement, name: string, value: stri
   }
 }
 
-function bindProperty(scope: any, el: HTMLElement, name: string, value: string) {
-  const fn = Function('scope', `with (scope) { return (${value}) }`);
-  const property = name.slice(1);
-  const initial = fn(scope);
+function observe(scope: any, expression, apply) {
+  try {
+    const fn = Function('scope', `with (scope) { return (${expression}) }`);
+    const initial = fn(scope);
 
-  if (isRef(initial)) {
-    el[property] = initial.value;
-    watch(initial, (v) => (el[property] = v));
+    if (isRef(initial)) {
+      apply(initial.value);
+      watch(initial, apply);
+      return;
+    }
+
+    const scopeProxy = createScopeProxy(scope);
+    const state = select(() => fn(scopeProxy));
+    watch(state, (v) => apply(v));
+
+    return () => state.detach();
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function bindProperty(scope: any, el: HTMLElement, name: string, value: string) {
+  const property = name.slice(1);
+  const apply = (value) => Promise.resolve(value).then((v) => (el[property] = v));
+
+  return observe(scope, value, apply);
+}
+
+function bindClassName(scope: any, el: HTMLElement, name: string, value: string) {
+  const className = name.slice(1);
+  const apply = (v) => (v ? el.classList.add(className) : el.classList.remove(className));
+
+  return observe(scope, value, apply);
+}
+
+function bindAttribute(scope: any, el: HTMLElement, name: string, value: string, detachHandlers) {
+  if (name.startsWith('@')) {
+    addEventListener(scope, el, name, value);
     return;
   }
 
-  const apply = (value) => value.catch(() => '[error]').then((v) => (el[property] = v));
-  const fnAsync = AsyncFn('scope', `with (scope) { return await (${value}) }`);
-  const scopeProxy = createScopeProxy(scope);
+  if (name.startsWith('^')) {
+    attachDispatcher(scope, el, name, value);
+    return;
+  }
 
-  apply(fnAsync(scopeProxy));
-  return react(() => apply(fnAsync(scopeProxy)));
+  if (name.startsWith(':')) {
+    const detach = bindProperty(scope, el, name, value);
+    detachHandlers.push(detach);
+    return;
+  }
+
+  if (name.startsWith('.')) {
+    const detach = bindClassName(scope, el, name, value);
+    detachHandlers.push(detach);
+    return;
+  }
 }
-
 export type HtmlBindings = [DocumentFragment, DetachFn];
 export type TemplateFn = (scope: any) => HtmlBindings;
 
@@ -69,27 +108,14 @@ export const html = (text: string | TemplateStringsArray): TemplateFn => {
     return [
       materialize(tree, (_el, node) => {
         const el = _el as HTMLElement;
+
         if (node.type !== 'element') {
           return;
         }
 
         for (const attr of node.attributes) {
           const { name, value } = attr;
-
-          if (name.startsWith('@')) {
-            addEventListener(scope, el, name, value);
-            return;
-          }
-
-          if (name.startsWith('^')) {
-            attachDispatcher(scope, el, name, value);
-            return;
-          }
-
-          if (name.startsWith(':')) {
-            const detach = bindProperty(scope, el, name, value);
-            detachHandlers.push(detach);
-          }
+          bindAttribute(scope, el, name, value, detachHandlers);
         }
       }),
       () => detachHandlers.forEach((f) => f()),

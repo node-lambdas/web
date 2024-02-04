@@ -4,9 +4,9 @@ import { html } from './component.js';
 
 const t = html`
   <div class="flex items-center p-2">
-    <button class="w-6 h-6" ^click="create" :hidden="notLoggedIn"><span class="material-icons">add</span></button>
-    <select class="bg-transparent font-small w-72 p-3" :hidden="noFunctions"></select>
-    <button class="w-6 h-6" ^click="editname" :hidden="noFunctionSelected">
+    <button class="w-6 h-6" ^click="create" .hidden="notLoggedIn"><span class="material-icons">add</span></button>
+    <select class="bg-transparent font-small w-72 p-3" .hidden="noFunctions"></select>
+    <button class="w-6 h-6" ^click="editname" .hidden="noFunctionSelected">
       <span class="material-icons">edit</span>
     </button>
   </div>
