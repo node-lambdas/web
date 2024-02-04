@@ -23,7 +23,7 @@ import { useState } from '../vendor/state.js';
 
 export type FileEntry = {
   contents: string;
-  meta: Record<string, string>;
+  meta?: Record<string, string>;
 };
 
 export type FunctionEntry = {
@@ -136,7 +136,7 @@ const actions = {
   updateContent(value) {
     const currentFile = get('currentFile');
     set('currentFile', {
-      meta: currentFile!.meta,
+      meta: currentFile?.meta,
       contents: value,
     });
     commit();
@@ -205,7 +205,7 @@ const actions = {
       await isAuthenticated();
       dispatch('reloadAll');
     } catch {
-      
+
     }
   },
   async resetAll() {
