@@ -171,7 +171,7 @@ const actions = {
     set('currentFunction', fn);
 
     await dispatch('updateFileList');
-    const indexFile = get('fileList').find(f => f.meta?.name === 'index.mjs');
+    const indexFile = get('fileList').find((f) => f.meta?.name === 'index.mjs');
     await dispatch('selectFile', indexFile);
   },
 
@@ -198,10 +198,31 @@ const actions = {
     await fetch('https://cloud.jsfn.run', { method: 'POST', body, headers });
   },
   async startup() {
-    await setupAuth();
-    await setupStore();
-    await dispatch('reload');
+    authEvents.addEventListener('signout', () => dispatch('resetAll'));
+    authEvents.addEventListener('signin', async () => dispatch('reloadAll'));
 
+    try {
+      await isAuthenticated();
+      dispatch('reloadAll');
+    } catch {
+      
+    }
+  },
+  async resetAll() {
+    set('currentFile', null);
+    set('currentFunction', null);
+    set('fileList', []);
+    set('functionList', []);
+    set('profileId', '');
+    set('storeId', '');
+    commit();
+  },
+  async reloadAll() {
+    await dispatch('updateProfileId');
+    await dispatch('setupStore');
+    await dispatch('reload');
+  },
+  async selectActionFromUrl() {
     const name = new URL(location.href).searchParams.get('fn');
 
     if (!name) {
@@ -212,42 +233,24 @@ const actions = {
     if (fn) {
       await dispatch('selectFunction', fn);
     }
-  }
+  },
+  async setupStore() {
+    let storeId = await getProperty('jsfn:storeId');
+
+    if (!storeId) {
+      storeId = await Store.create();
+      await setProperty('jsfn:storeId', storeId);
+    }
+
+    set('storeId', storeId);
+    commit();
+  },
 };
 
 const { set, get, react, watch, select, dispatch, commit } = useState(initialState, actions);
 
 function getResourceStore() {
   return Store.get(get('storeId'));
-}
-
-export async function setupAuth() {
-  authEvents.addEventListener('signout', () => dispatch('updateProfileId'));
-  authEvents.addEventListener('signin', async () => {
-    await dispatch('updateProfileId');
-    await dispatch('reload');
-  });
-
-  try {
-    await isAuthenticated();
-    dispatch('updateProfileId');
-  } catch {
-    return new Promise((resolve) => {
-      authEvents.addEventListener('signin', (e) => resolve(e.detail));
-    });
-  }
-}
-
-export async function setupStore() {
-  let storeId = await getProperty('jsfn:storeId');
-
-  if (!storeId) {
-    storeId = await Store.create();
-    await setProperty('jsfn:storeId', storeId);
-  }
-
-  set('storeId', storeId);
-  commit();
 }
 
 export { get, react, watch, select, dispatch };
