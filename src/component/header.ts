@@ -1,4 +1,4 @@
-import { getDownloadUrl } from 'https://bin.homebots.io/index.mjs';
+import { getZipUrl } from 'https://bin.homebots.io/index.mjs';
 import { customElement } from './decorators.js';
 import { select } from '../store/store.js';
 import { html } from './component.js';
@@ -27,7 +27,7 @@ const t = html`
 @customElement('js-header', t)
 export class Header extends HTMLElement {
   fnName = select((s) => s.currentFunction?.name || '');
-  downloadUrl = select((s) => (s.binId ? getDownloadUrl(s.binId) : ''));
+  downloadUrl = select((s) => (s.binId ? getZipUrl(s.binId) : ''));
 
   onLinkCopy(e) {
     e.preventDefault();

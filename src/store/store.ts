@@ -7,7 +7,7 @@ import {
   writeFile,
   createFile,
   createBin,
-  getDownloadUrl,
+  getZipUrl,
 } from 'https://bin.homebots.io/index.mjs';
 import {
   getProfile,
@@ -189,7 +189,7 @@ const actions = {
     }
 
     const name = fn.name;
-    const source = getDownloadUrl(binId);
+    const source = getZipUrl(binId);
     const body = JSON.stringify({ source, name });
     const headers = {
       'content-type': 'application/json',
